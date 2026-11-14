@@ -8122,6 +8122,7 @@ let _testTransformedCurrent = '';
 let _savedTransformed1024 = '';
 let _savedTransformed512 = '';
 let _savedTransformedCurrent = '';
+let _appliedFitMode = '';
 let _currentAssetKey = 'preset';
 let _assetStates = {}; // key -> { fitMode, isResized, transformed1024, transformed512, transformedCurrent, statusMsg, sourceUrl }
 function $(id) {
@@ -8225,11 +8226,6 @@ if (radio) radio.checked = true;
 updateFitPill();
 }
 function setFitMode(mode) {
-const isCurrentResized = _bothStoresDone || (_currentAssetKey && _assetStates[_currentAssetKey] && _assetStates[_currentAssetKey].isResized);
-const isSquare = (_sourceWidth === _sourceHeight && _sourceWidth > 0);
-if (isCurrentResized || isSquare) {
-return; // Locked once already compliant or resized
-}
 const newMode = (mode === 'pad' || mode === 'stretch') ? mode : 'center-crop';
 _fitMode = newMode;
 updateFitContainerVisibility();
@@ -8247,6 +8243,14 @@ return _fitMode;
 }
 function setSource(src) {
 if (!src) return;
+if (_savedTransformedCurrent && (src === _savedTransformedCurrent || src === _savedTransformed1024 || src === _savedTransformed512)) {
+_sourceDataUrl = _originalSourceDataUrl || src;
+ensureSourceLoaded(() => {
+updateLivePreview();
+updateFitContainerVisibility();
+});
+return;
+}
 _sourceDataUrl = src;
 _originalSourceDataUrl = src; // Lock original — never overwritten by resize output
 _transformedImg = null;
@@ -8256,6 +8260,7 @@ _testTransformedCurrent = '';
 _savedTransformed1024 = '';
 _savedTransformed512 = '';
 _savedTransformedCurrent = '';
+_appliedFitMode = '';
 _bothStoresDone = false;
 if (_currentAssetKey && _assetStates[_currentAssetKey]) {
 _assetStates[_currentAssetKey].isResized = false;
@@ -8335,11 +8340,11 @@ ctx.drawImage(_sourceImg, drawX, drawY, drawW, drawH);
 function updateLivePreview() {
 const liveCanvas = $('appIconResizeLiveCanvas');
 if (!liveCanvas) return;
-const isCurrentResized = _bothStoresDone || (_currentAssetKey && _assetStates[_currentAssetKey] && _assetStates[_currentAssetKey].isResized);
+const isCurrentModeApplied = !!(_bothStoresDone && (!_appliedFitMode || _appliedFitMode === _fitMode));
 const transformedSrc = (_isTestPreviewMode && _testTransformedCurrent)
 ? _testTransformedCurrent
 : (_savedTransformedCurrent || (_currentAssetKey && _assetStates[_currentAssetKey] && _assetStates[_currentAssetKey].transformedCurrent) || '');
-if (isCurrentResized && transformedSrc) {
+if (isCurrentModeApplied && transformedSrc) {
 if (_transformedImg && _transformedImg.src === transformedSrc && _transformedImg.complete) {
 liveCanvas.width = 1024;
 liveCanvas.height = 1024;
@@ -8392,6 +8397,7 @@ _testTransformed1024 = dataUrl1024;
 _testTransformed512 = dataUrl512;
 _testTransformedCurrent = transformedDataUrl;
 _bothStoresDone = true;
+_appliedFitMode = _fitMode;
 const modalImg = $('msIconModalImg');
 if (modalImg) modalImg.src = transformedDataUrl;
 if (typeof global.IconLog !== 'undefined' && typeof global.IconLog.inspectIcon === 'function') {
@@ -8407,7 +8413,6 @@ if (liveCtx) liveCtx.drawImage(cv1024, 0, 0);
 _transformedImg = new Image();
 _transformedImg.src = transformedDataUrl;
 updateLivePreview();
-_bothStoresDone = true;
 updateFitContainerVisibility();
 const statusMsg = $('iconResizeStatusMsg');
 const msgText = `Test Preview: Resized to ${targetStore === 'google' ? '512×512' : '1024×1024'} px (Draft untouched)`;
@@ -8448,6 +8453,7 @@ transformed512: dataUrl512,
 transformedCurrent: transformedDataUrl
 });
 _bothStoresDone = true;
+_appliedFitMode = _fitMode;
 if (typeof renderIcons === 'function') renderIcons();
 if (typeof validateAppIcon === 'function') validateAppIcon();
 if (typeof saveState === 'function') saveState();
@@ -8467,7 +8473,6 @@ if (liveCtx) liveCtx.drawImage(cv1024, 0, 0);
 _transformedImg = new Image();
 _transformedImg.src = transformedDataUrl;
 updateLivePreview();
-_bothStoresDone = true;
 updateFitContainerVisibility();
 }
 function checkAlreadyCompliant() {
@@ -8480,6 +8485,11 @@ const isStoreSize = (w === (tStore === 'google' ? 512 : 1024));
 const srcStr = _originalSourceDataUrl || _sourceDataUrl || '';
 const isPngSrc = !srcStr.startsWith('data:') || srcStr.startsWith('data:image/png');
 _bothStoresDone = isSquare && isStoreSize && isPngSrc;
+if (_bothStoresDone) {
+_appliedFitMode = _fitMode;
+} else {
+_appliedFitMode = '';
+}
 }
 function updateFitContainerVisibility() {
 const fitSection = $('appIconFitContainer') || (typeof document !== 'undefined' && typeof document.querySelector === 'function' ? document.querySelector('.icon-resizer-fit-container') : null);
@@ -8490,17 +8500,16 @@ const statusMsg = $('iconResizeStatusMsg');
 const passNote = $('appIconFitPassNote');
 if (fitSection) fitSection.style.display = 'flex';
 if (placeholder) placeholder.style.display = 'none';
-const isCurrentResized = _bothStoresDone || (_currentAssetKey && _assetStates[_currentAssetKey] && _assetStates[_currentAssetKey].isResized);
+if (fitOptions) {
+fitOptions.style.pointerEvents = '';
+fitOptions.style.opacity = '';
+}
 const isSquare = (_sourceWidth === _sourceHeight && _sourceWidth > 0);
-const isPassed = !!(isCurrentResized || isSquare);
 if (passNote) {
 passNote.textContent = '1:1 square · Ratio changes have no effect';
-passNote.style.display = isPassed ? 'inline-block' : 'none';
+passNote.style.display = isSquare ? 'inline-block' : 'none';
 }
-if (fitOptions) {
-fitOptions.style.pointerEvents = isPassed ? 'none' : '';
-fitOptions.style.opacity = isPassed ? '0.5' : '';
-}
+const isCurrentModeApplied = !!(_bothStoresDone && (!_appliedFitMode || _appliedFitMode === _fitMode));
 if (typeof isDemoMode === 'function' && isDemoMode() && !_isTestPreviewMode) {
 if (primaryBtn) {
 primaryBtn.style.display = 'inline-flex';
@@ -8513,16 +8522,25 @@ return;
 if (_isTestPreviewMode) {
 removePrimaryBtnLock();
 if (primaryBtn) {
-primaryBtn.disabled = !!isCurrentResized;
+primaryBtn.disabled = isCurrentModeApplied;
 primaryBtn.style.display = 'inline-flex';
 const btnText = $('iconActionPrimaryText');
 if (btnText) {
 btnText.textContent = 'Fix & Resize to Store Spec';
 }
 }
+if (statusMsg) {
+if (isCurrentModeApplied) {
+const state = _currentAssetKey && _assetStates[_currentAssetKey];
+statusMsg.textContent = (state && state.statusMsg) ? state.statusMsg : `Test Preview: Resized to ${_targetStore === 'google' ? '512×512' : '1024×1024'} px (Draft untouched)`;
+statusMsg.style.display = 'block';
+} else {
+statusMsg.style.display = 'none';
+}
+}
 return;
 }
-if (isCurrentResized) {
+if (isCurrentModeApplied) {
 if (primaryBtn) {
 primaryBtn.disabled = true;
 primaryBtn.style.display = 'inline-flex';
@@ -8691,6 +8709,7 @@ _testTransformed1024 = state.transformed1024 || '';
 _testTransformed512 = state.transformed512 || '';
 _testTransformedCurrent = state.transformedCurrent || '';
 _bothStoresDone = true;
+_appliedFitMode = state.fitMode || _fitMode;
 syncFitModeUI(_fitMode);
 ensureSourceLoaded(() => {
 updateLivePreview();
