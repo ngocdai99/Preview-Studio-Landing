@@ -14,14 +14,22 @@ import { DeviceThemeToggle } from "./DeviceThemeToggle";
 import { FcmPayloadModal } from "./FcmPayloadModal";
 import { FunnelFooterBanner } from "./FunnelFooterBanner";
 import { SlidingTabs } from "@/components/ui/SlidingTabs";
-import { Smartphone, Code } from "lucide-react";
+import { Smartphone, Code, Columns2 } from "lucide-react";
 
 export function PushPreviewHub() {
   const [data, setData] = useState<PushNotificationData>(DEFAULT_PUSH_DATA);
   const [device, setDevice] = useState<DeviceType>("ios");
+  const [singleDevice, setSingleDevice] = useState<"ios" | "android">("ios");
   const [theme, setTheme] = useState<PreviewTheme>("dark");
   const [expanded, setExpanded] = useState<boolean>(true);
   const [isPayloadOpen, setIsPayloadOpen] = useState<boolean>(false);
+
+  const handleDeviceChange = (newDevice: DeviceType) => {
+    setDevice(newDevice);
+    if (newDevice === "ios" || newDevice === "android") {
+      setSingleDevice(newDevice);
+    }
+  };
 
   const handleReset = () => {
     setData(DEFAULT_PUSH_DATA);
@@ -71,9 +79,13 @@ export function PushPreviewHub() {
       </div>
 
       {/* Main Workspace (Completely Clean & Flat - No Enclosing Outer Cards) */}
-      <div className="w-full max-w-7xl px-4 sm:px-6 py-8 flex flex-col lg:flex-row gap-8 lg:gap-16 items-start justify-center">
+      <div
+        className={`w-full ${
+          device === "dual" ? "max-w-[1440px]" : "max-w-7xl"
+        } px-4 sm:px-6 py-8 flex flex-col lg:flex-row gap-8 lg:gap-12 items-start justify-center transition-all duration-300`}
+      >
         {/* Left Column: Clean Unboxed Form */}
-        <div className="w-full lg:w-[380px] xl:w-[410px] shrink-0">
+        <div className="w-full lg:w-[370px] xl:w-[400px] shrink-0">
           <PushFormEditor
             data={data}
             onChange={setData}
@@ -81,30 +93,16 @@ export function PushPreviewHub() {
           />
         </div>
 
-        {/* Right Column: Direct Phone Staging with 3D Flip Card Animation */}
+        {/* Right Column: Direct Phone Staging (Single 3D Flip vs Dual View) */}
         <div className="flex-1 w-full min-w-0 flex flex-col items-center justify-center pt-1">
-          {/* 3D Perspective Stage Container */}
-          <div
-            className="w-full flex justify-center py-2"
-            style={{ perspective: "1400px" }}
-          >
-            {/* 3D Flipping Card Anchor */}
-            <div
-              className="relative w-full max-w-[340px] h-[650px] transition-transform duration-700 ease-[cubic-bezier(0.34,1.4,0.64,1)] will-change-transform"
-              style={{
-                transformStyle: "preserve-3d",
-                WebkitTransformStyle: "preserve-3d",
-                transform: device === "android" ? "rotateY(180deg)" : "rotateY(0deg)",
-              }}
-            >
-              {/* Front Face: iPhone Mockup */}
-              <div
-                className="absolute inset-0 w-full h-full"
-                style={{
-                  backfaceVisibility: "hidden",
-                  WebkitBackfaceVisibility: "hidden",
-                }}
-              >
+          {device === "dual" ? (
+            /* Dual View: Both iPhone & Android side-by-side */
+            <div className="w-full flex flex-col xl:flex-row items-center justify-center gap-8 py-2 animate-in fade-in duration-300">
+              {/* iPhone Staging */}
+              <div className="flex flex-col items-center">
+                <div className="text-[11px] font-mono tracking-widest text-[#989A99] uppercase mb-2">
+                  iPhone Preview
+                </div>
                 <IosPreviewCard
                   data={data}
                   theme={theme}
@@ -113,15 +111,11 @@ export function PushPreviewHub() {
                 />
               </div>
 
-              {/* Back Face: Android Phone Mockup (Rotated 180deg) */}
-              <div
-                className="absolute inset-0 w-full h-full"
-                style={{
-                  backfaceVisibility: "hidden",
-                  WebkitBackfaceVisibility: "hidden",
-                  transform: "rotateY(180deg)",
-                }}
-              >
+              {/* Android Staging */}
+              <div className="flex flex-col items-center">
+                <div className="text-[11px] font-mono tracking-widest text-[#989A99] uppercase mb-2">
+                  Android phone Preview
+                </div>
                 <AndroidPreviewCard
                   data={data}
                   theme={theme}
@@ -130,13 +124,63 @@ export function PushPreviewHub() {
                 />
               </div>
             </div>
-          </div>
+          ) : (
+            /* Single Device Staging with 3D Flip Card Animation */
+            <div
+              className="w-full flex justify-center py-2"
+              style={{ perspective: "1400px" }}
+            >
+              {/* 3D Flipping Card Anchor */}
+              <div
+                className="relative w-full max-w-[340px] h-[650px] transition-transform duration-700 ease-[cubic-bezier(0.34,1.4,0.64,1)] will-change-transform"
+                style={{
+                  transformStyle: "preserve-3d",
+                  WebkitTransformStyle: "preserve-3d",
+                  transform:
+                    singleDevice === "android" ? "rotateY(180deg)" : "rotateY(0deg)",
+                }}
+              >
+                {/* Front Face: iPhone Mockup */}
+                <div
+                  className="absolute inset-0 w-full h-full"
+                  style={{
+                    backfaceVisibility: "hidden",
+                    WebkitBackfaceVisibility: "hidden",
+                  }}
+                >
+                  <IosPreviewCard
+                    data={data}
+                    theme={theme}
+                    expanded={expanded}
+                    onToggleExpand={() => setExpanded(!expanded)}
+                  />
+                </div>
 
-          {/* Unified Device Controls: Device Switcher + Capsule Theme Toggle */}
-          <div className="mt-5 flex items-center justify-center gap-3">
+                {/* Back Face: Android Phone Mockup (Rotated 180deg) */}
+                <div
+                  className="absolute inset-0 w-full h-full"
+                  style={{
+                    backfaceVisibility: "hidden",
+                    WebkitBackfaceVisibility: "hidden",
+                    transform: "rotateY(180deg)",
+                  }}
+                >
+                  <AndroidPreviewCard
+                    data={data}
+                    theme={theme}
+                    expanded={expanded}
+                    onToggleExpand={() => setExpanded(!expanded)}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Unified Device Controls: Device Switcher + Dual View + Capsule Theme Toggle */}
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
             <SlidingTabs<DeviceType>
               value={device}
-              onChange={(val) => setDevice(val as DeviceType)}
+              onChange={handleDeviceChange}
               options={[
                 {
                   value: "ios",
@@ -148,8 +192,13 @@ export function PushPreviewHub() {
                   label: "Android phone",
                   icon: <Smartphone className="w-3.5 h-3.5" />,
                 },
+                {
+                  value: "dual",
+                  label: "Dual View",
+                  icon: <Columns2 className="w-3.5 h-3.5" />,
+                },
               ]}
-              className="w-[230px] sm:w-[250px] shrink-0"
+              className="w-[315px] sm:w-[350px] shrink-0"
               size="sm"
               ariaLabel="Device selector tabs"
             />

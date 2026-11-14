@@ -8,7 +8,7 @@ export interface PushNotificationData {
   buttons: string[];
 }
 
-export type DeviceType = "ios" | "android";
+export type DeviceType = "ios" | "android" | "dual";
 export type PreviewTheme = "dark" | "light";
 
 export const DEFAULT_PUSH_DATA: PushNotificationData = {
