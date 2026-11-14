@@ -21,7 +21,9 @@ export function PushPreviewHub() {
   const [device, setDevice] = useState<DeviceType>("ios");
   const [singleDevice, setSingleDevice] = useState<"ios" | "android">("ios");
   const [theme, setTheme] = useState<PreviewTheme>("dark");
-  const [expanded, setExpanded] = useState<boolean>(true);
+  // Independent expand/collapse states for iPhone and Android devices
+  const [iosExpanded, setIosExpanded] = useState<boolean>(true);
+  const [androidExpanded, setAndroidExpanded] = useState<boolean>(true);
   const [isPayloadOpen, setIsPayloadOpen] = useState<boolean>(false);
 
   const handleDeviceChange = (newDevice: DeviceType) => {
@@ -96,7 +98,7 @@ export function PushPreviewHub() {
         {/* Right Column: Direct Phone Staging (Single 3D Flip vs Dual View) */}
         <div className="flex-1 w-full min-w-0 flex flex-col items-center justify-center pt-1">
           {device === "dual" ? (
-            /* Dual View: Both iPhone & Android side-by-side */
+            /* Dual View: Both iPhone & Android side-by-side with independent expand/collapse */
             <div className="w-full flex flex-col xl:flex-row items-center justify-center gap-8 py-2 animate-in fade-in duration-300">
               {/* iPhone Staging */}
               <div className="flex flex-col items-center">
@@ -106,8 +108,8 @@ export function PushPreviewHub() {
                 <IosPreviewCard
                   data={data}
                   theme={theme}
-                  expanded={expanded}
-                  onToggleExpand={() => setExpanded(!expanded)}
+                  expanded={iosExpanded}
+                  onToggleExpand={() => setIosExpanded((prev) => !prev)}
                 />
               </div>
 
@@ -119,8 +121,8 @@ export function PushPreviewHub() {
                 <AndroidPreviewCard
                   data={data}
                   theme={theme}
-                  expanded={expanded}
-                  onToggleExpand={() => setExpanded(!expanded)}
+                  expanded={androidExpanded}
+                  onToggleExpand={() => setAndroidExpanded((prev) => !prev)}
                 />
               </div>
             </div>
@@ -151,8 +153,8 @@ export function PushPreviewHub() {
                   <IosPreviewCard
                     data={data}
                     theme={theme}
-                    expanded={expanded}
-                    onToggleExpand={() => setExpanded(!expanded)}
+                    expanded={iosExpanded}
+                    onToggleExpand={() => setIosExpanded((prev) => !prev)}
                   />
                 </div>
 
@@ -168,8 +170,8 @@ export function PushPreviewHub() {
                   <AndroidPreviewCard
                     data={data}
                     theme={theme}
-                    expanded={expanded}
-                    onToggleExpand={() => setExpanded(!expanded)}
+                    expanded={androidExpanded}
+                    onToggleExpand={() => setAndroidExpanded((prev) => !prev)}
                   />
                 </div>
               </div>
