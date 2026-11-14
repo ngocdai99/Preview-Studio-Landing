@@ -2446,6 +2446,9 @@ if (typeof validateAppIcon === 'function') validateAppIcon();
 if (typeof updateDraftPill === 'function') updateDraftPill();
 if (typeof saveState === 'function') saveState();
 }
+if (typeof global.IconLog !== 'undefined' && typeof global.IconLog.resetCompliance === 'function') {
+global.IconLog.resetCompliance();
+}
 if (typeof global.IconResizer !== 'undefined') {
 if (typeof global.IconResizer.setTestPreviewMode === 'function') {
 global.IconResizer.setTestPreviewMode(false);

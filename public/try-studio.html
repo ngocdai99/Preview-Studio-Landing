@@ -8498,11 +8498,11 @@ let tStore = 'apple';
 try { if (global.IconLog && typeof global.IconLog.getTargetStore === 'function') tStore = global.IconLog.getTargetStore(); } catch (e) {}
 const isStoreSize = (w === (tStore === 'google' ? 512 : 1024));
 const srcStr = _originalSourceDataUrl || _sourceDataUrl || '';
-const isPngSrc = !srcStr.startsWith('data:') || srcStr.startsWith('data:image/png');
+const isPngSrc = typeof srcStr === 'string' && (srcStr.startsWith('data:image/png') || (!srcStr.startsWith('data:') && !srcStr.endsWith('.webp') && !srcStr.endsWith('.jpg') && !srcStr.endsWith('.jpeg')));
 const isAuditedCompliant = (typeof global.IconLog !== 'undefined' && typeof global.IconLog.isCompliant === 'function')
 ? global.IconLog.isCompliant()
 : false;
-_bothStoresDone = isAuditedCompliant || (isSquare && isStoreSize && isPngSrc);
+_bothStoresDone = isSquare && isStoreSize && isPngSrc && isAuditedCompliant;
 if (_bothStoresDone) {
 _appliedFitMode = _fitMode;
 } else {
@@ -8533,7 +8533,7 @@ const isAuditedCompliant = (typeof global.IconLog !== 'undefined' && typeof glob
 let tStore = 'apple';
 try { if (global.IconLog && typeof global.IconLog.getTargetStore === 'function') tStore = global.IconLog.getTargetStore(); } catch (e) {}
 const isTargetDim = (w === (tStore === 'google' ? 512 : 1024));
-const isStoreCompliant = isResizedState || isAuditedCompliant || _bothStoresDone || (isSquare && isTargetDim);
+const isStoreCompliant = isResizedState || (isAuditedCompliant && isSquare && isTargetDim);
 if (passNote) {
 passNote.textContent = '1:1 square · Ratio changes have no effect';
 passNote.style.display = (isStoreCompliant || isSquare) ? 'inline-block' : 'none';
@@ -8587,10 +8587,32 @@ if (statusMsg) statusMsg.style.display = 'none';
 function updateActionBtn() {
 }
 global.onIconAuditComplete = function(isCompliant) {
+_bothStoresDone = !!isCompliant;
 if (isCompliant) {
-_bothStoresDone = true;
 _appliedFitMode = _fitMode;
+} else {
+_appliedFitMode = '';
+if (_currentAssetKey && _assetStates[_currentAssetKey]) {
+_assetStates[_currentAssetKey].isResized = false;
+_assetStates[_currentAssetKey].transformedCurrent = '';
+_assetStates[_currentAssetKey].transformed1024 = '';
+_assetStates[_currentAssetKey].transformed512 = '';
 }
+if (_assetStates['preset']) {
+_assetStates['preset'].isResized = false;
+_assetStates['preset'].transformedCurrent = '';
+_assetStates['preset'].transformed1024 = '';
+_assetStates['preset'].transformed512 = '';
+}
+_testTransformed1024 = '';
+_testTransformed512 = '';
+_testTransformedCurrent = '';
+_savedTransformed1024 = '';
+_savedTransformed512 = '';
+_savedTransformedCurrent = '';
+_transformedImg = null;
+}
+updateLivePreview();
 updateFitContainerVisibility();
 };
 global.onResizerTargetStoreChanged = function(store) {
@@ -9205,7 +9227,8 @@ init: initIconLog,
 getTargetStore,
 setTargetStore,
 inspectIcon,
-isCompliant: () => _isLastAuditedCompliant
+isCompliant: () => _isLastAuditedCompliant,
+resetCompliance: () => { _isLastAuditedCompliant = false; }
 };
 global.setTargetStore = setTargetStore;
 global.inspectIconAsset = inspectIcon;
@@ -11194,6 +11217,9 @@ if (typeof renderIcons === 'function') renderIcons();
 if (typeof validateAppIcon === 'function') validateAppIcon();
 if (typeof updateDraftPill === 'function') updateDraftPill();
 if (typeof saveState === 'function') saveState();
+}
+if (typeof global.IconLog !== 'undefined' && typeof global.IconLog.resetCompliance === 'function') {
+global.IconLog.resetCompliance();
 }
 if (typeof global.IconResizer !== 'undefined') {
 if (typeof global.IconResizer.setTestPreviewMode === 'function') {
