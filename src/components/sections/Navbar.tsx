@@ -11,10 +11,12 @@ import { Menu, X, ExternalLink } from "lucide-react";
 export function Navbar() {
   const pathname = usePathname();
   const isTryPage = pathname === "/try" || pathname?.startsWith("/try");
+  const isPushPreviewPage = pathname === "/push-preview" || pathname?.startsWith("/push-preview");
   const isHomePage = pathname === "/" || pathname === "";
 
   const [activeTab, setActiveTab] = useState<string>(() => {
     if (isTryPage) return "Live Demo";
+    if (isPushPreviewPage) return "Push Preview";
     return "";
   });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -36,6 +38,11 @@ export function Navbar() {
   useEffect(() => {
     if (isTryPage) {
       setActiveTab("Live Demo");
+      return;
+    }
+
+    if (isPushPreviewPage) {
+      setActiveTab("Push Preview");
       return;
     }
 
@@ -81,7 +88,10 @@ export function Navbar() {
     setActiveTab(label);
     setMobileMenuOpen(false);
 
-    if (isTryPage) {
+    if (isTryPage || isPushPreviewPage) {
+      if (href.startsWith("#")) {
+        window.location.href = `/${href}`;
+      }
       return;
     }
 
@@ -161,7 +171,7 @@ export function Navbar() {
               }
 
               const isSelected = activeTab === item.label;
-              const linkHref = isTryPage && item.href.startsWith("#") ? `/${item.href}` : item.href;
+              const linkHref = (isTryPage || isPushPreviewPage) && item.href.startsWith("#") ? `/${item.href}` : item.href;
 
               return (
                 <Link
