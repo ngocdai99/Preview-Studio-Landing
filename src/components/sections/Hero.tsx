@@ -30,7 +30,7 @@ export function Hero() {
           {/* Left Column: Headline, Description & CTAs */}
           <div className="lg:w-[50%] shrink-0">
             {/* Header Eyebrow */}
-            <p className="text-[13px] sm:text-[14px] font-medium text-slate-500 dark:text-slate-400 mb-2.5 sm:mb-3 select-none">
+            <p className="text-[13px] sm:text-[14px] font-medium text-[#475569] dark:text-[oklch(0.684_0.00275_157.5)] mb-2.5 sm:mb-3 select-none">
               {hero.badge}
             </p>
 

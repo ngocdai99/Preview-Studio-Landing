@@ -34,7 +34,7 @@ export const en = {
     trustBadges: [
       "One-time payment",
       "Standalone offline HTML",
-      "No developer accounts required",
+      "Verify & resize app icon",
     ],
   },
 
