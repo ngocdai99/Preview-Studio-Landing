@@ -7782,7 +7782,7 @@ renderIconIssue('warn', 'Pre-rounded Corners Notice', 'Google Play dynamically a
 return;
 }
 if(w !== 512 || h !== 512){
-renderIconIssue('warn', `Non-Target Dimensions: ${w} × ${h} px`, 'Target specification is 512 × 512 px.');
+renderIconIssue('warn', `Dimension Notice (${w}×${h} px)`, 'Google Play requires <strong>512×512 px</strong> square.');
 return;
 }
 badge.className = 'icon-issue-card ok';
@@ -8711,6 +8711,7 @@ showToast('Applied test image to your app icon!', 'ok');
 }
 }
 function syncCardStateDots() {
+if (typeof isDemoMode === 'function' && isDemoMode()) {
 const cardIdMap = {
 preset: 'demoSampleCardPreset',
 doraemon1: 'demoSampleCard1',
@@ -8724,6 +8725,7 @@ const state = _assetStates[key];
 const hasState = !!(state && state.isResized);
 card.classList.toggle('has-state', !!hasState);
 });
+}
 }
 function getCurrentAssetKey() {
 return _currentAssetKey;
@@ -10564,9 +10566,11 @@ const secTitle = $('appIconResizeSectionTitle') || (typeof document !== 'undefin
 const fitBox = $('appIconFitContainer') || (typeof document !== 'undefined' && typeof document.querySelector === 'function' ? document.querySelector('.icon-resizer-fit-container') : null);
 if (liveCv) liveCv.style.display = isIconType ? '' : 'none';
 if (secTitle) {
-const isDemo = typeof isDemoMode === 'function' && isDemoMode();
-secTitle.style.display = (isIconType && isDemo) ? 'block' : 'none';
+secTitle.style.display = 'none';
 if (isIconType) secTitle.textContent = 'Your App Icon';
+}
+if (typeof isDemoMode === 'function' && isDemoMode()) {
+if (secTitle) secTitle.style.display = isIconType ? 'block' : 'none';
 }
 if (fitBox) fitBox.style.display = isIconType ? 'flex' : 'none';
 const fitPlaceholder = $('appIconFitPlaceholder');

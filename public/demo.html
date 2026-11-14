@@ -1792,9 +1792,11 @@ const secTitle = $('appIconResizeSectionTitle') || (typeof document !== 'undefin
 const fitBox = $('appIconFitContainer') || (typeof document !== 'undefined' && typeof document.querySelector === 'function' ? document.querySelector('.icon-resizer-fit-container') : null);
 if (liveCv) liveCv.style.display = isIconType ? '' : 'none';
 if (secTitle) {
-const isDemo = typeof isDemoMode === 'function' && isDemoMode();
-secTitle.style.display = (isIconType && isDemo) ? 'block' : 'none';
+secTitle.style.display = 'none';
 if (isIconType) secTitle.textContent = 'Your App Icon';
+}
+if (typeof isDemoMode === 'function' && isDemoMode()) {
+if (secTitle) secTitle.style.display = isIconType ? 'block' : 'none';
 }
 if (fitBox) fitBox.style.display = isIconType ? 'flex' : 'none';
 const fitPlaceholder = $('appIconFitPlaceholder');
