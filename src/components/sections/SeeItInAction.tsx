@@ -160,6 +160,8 @@ export function SeeItInAction() {
                           width={1200}
                           height={1800}
                           className="sm:hidden w-full h-full object-cover"
+                          loading={idx === 0 ? "eager" : "lazy"}
+                          priority={idx === 0}
                         />
                         <Image
                           src={slide.src}
@@ -167,6 +169,8 @@ export function SeeItInAction() {
                           width={slide.width}
                           height={slide.height}
                           className="hidden sm:block w-full h-full object-cover"
+                          loading={idx === 0 ? "eager" : "lazy"}
+                          priority={idx === 0}
                         />
                       </>
                     ) : (
@@ -176,6 +180,8 @@ export function SeeItInAction() {
                         width={slide.width}
                         height={slide.height}
                         className="w-full h-full object-cover"
+                        loading={idx === 0 ? "eager" : "lazy"}
+                        priority={idx === 0}
                       />
                     )}
                   </div>
