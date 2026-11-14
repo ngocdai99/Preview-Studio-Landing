@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   PushNotificationData,
   DeviceType,
@@ -25,6 +25,22 @@ export function PushPreviewHub() {
   const [iosExpanded, setIosExpanded] = useState<boolean>(true);
   const [androidExpanded, setAndroidExpanded] = useState<boolean>(true);
   const [isPayloadOpen, setIsPayloadOpen] = useState<boolean>(false);
+  const [canFitDual, setCanFitDual] = useState<boolean>(true);
+
+  // Monitor viewport width: Dual view requires at least 1280px (xl) to render side-by-side with editor form
+  useEffect(() => {
+    const mql = window.matchMedia("(min-width: 1280px)");
+    const handleResize = () => {
+      const matches = mql.matches;
+      setCanFitDual(matches);
+      if (!matches) {
+        setDevice((curr) => (curr === "dual" ? singleDevice || "ios" : curr));
+      }
+    };
+    handleResize();
+    mql.addEventListener("change", handleResize);
+    return () => mql.removeEventListener("change", handleResize);
+  }, [singleDevice]);
 
   const handleDeviceChange = (newDevice: DeviceType) => {
     setDevice(newDevice);
@@ -37,23 +53,26 @@ export function PushPreviewHub() {
     setData(DEFAULT_PUSH_DATA);
   };
 
+  const deviceOptions = canFitDual
+    ? [
+        { value: "ios" as const, label: "iOS" },
+        { value: "android" as const, label: "Android" },
+        { value: "dual" as const, label: "Dual" },
+      ]
+    : [
+        { value: "ios" as const, label: "iOS" },
+        { value: "android" as const, label: "Android" },
+      ];
+
   return (
     <div className="w-full flex flex-col items-center bg-[#131413] text-[#f8fafc]">
       {/* Top Header Bar */}
       <div className="w-full max-w-7xl xl:max-w-[1360px] px-4 sm:px-6 pt-8 pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#282928]">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-[11px] font-mono tracking-widest text-[#989A99] uppercase">
-              Free Developer Tool
-            </span>
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#1D1E1D] border border-[#282928] text-[#989A99]">
-              Client-Side Local
-            </span>
-          </div>
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#f8fafc]">
             Push Notification Visual Preview
           </h1>
-          <p className="text-xs text-[#989A99] mt-0.5">
+          <p className="text-[13px] sm:text-[14px] font-medium text-[#475569] dark:text-[oklch(0.684_0.00275_157.5)] mt-1">
             Preview notifications on realistic iPhone & Android device frames before sending.
           </p>
         </div>
@@ -77,12 +96,8 @@ export function PushPreviewHub() {
             <SlidingTabs<DeviceType>
               value={device}
               onChange={handleDeviceChange}
-              options={[
-                { value: "ios", label: "iOS" },
-                { value: "android", label: "Android" },
-                { value: "dual", label: "Dual" },
-              ]}
-              className="w-[230px] sm:w-[250px] shrink-0"
+              options={deviceOptions}
+              className={`${canFitDual ? "w-[230px] sm:w-[250px]" : "w-[160px] sm:w-[170px]"} shrink-0`}
               size="sm"
               ariaLabel="Device selector tabs"
             />
@@ -105,9 +120,9 @@ export function PushPreviewHub() {
           </div>
 
           {/* Staging Area: Dual View vs Single 3D Flip */}
-          {device === "dual" ? (
+          {canFitDual && device === "dual" ? (
             /* Dual View: Both iPhone & Android side-by-side with independent expand/collapse */
-            <div className="w-full flex flex-col xl:flex-row items-center justify-center gap-8 py-2 animate-in fade-in duration-300">
+            <div className="w-full flex flex-row items-center justify-center gap-8 py-2 animate-in fade-in duration-300">
               {/* iPhone Staging */}
               <div className="flex flex-col items-center">
                 <div className="text-[11px] font-mono tracking-widest text-[#989A99] uppercase mb-2">

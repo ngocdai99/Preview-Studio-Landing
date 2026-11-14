@@ -361,21 +361,16 @@ export const en = {
     disclaimer: "Independent tool · Not affiliated with Apple Inc. or Google LLC.",
     columns: [
       {
-        title: "Product",
-        links: [
-          { label: "Live Demo", href: "/try" },
-          { label: "Why Us", href: "/#comparison" },
-          { label: "Features", href: "/#features" },
-          { label: "Pricing", href: "/#pricing" },
-          { label: "FAQ", href: "/#faq" },
-        ],
-      },
-      {
-        title: "Legal & Store",
+        title: "Store",
         links: [
           { label: "Free ASO Cheatsheet", href: "https://kaidevlabs.gumroad.com/l/aso-cheatsheet" },
           { label: "Gumroad Store", href: "https://kaidevlabs.gumroad.com/" },
           { label: "Kai DevLabs", href: "https://kaidevlabs.pages.dev/" },
+        ],
+      },
+      {
+        title: "Legal",
+        links: [
           { label: "Privacy Policy", href: "/privacy" },
           { label: "Terms & Refunds", href: "/terms" },
         ],

@@ -8,6 +8,7 @@ import {
   generateOneSignalPayload,
 } from "./payloadGenerator";
 import { X, Copy, Check, Code } from "lucide-react";
+import { SlidingTabs } from "@/components/ui/SlidingTabs";
 
 interface FcmPayloadModalProps {
   isOpen: boolean;
@@ -43,11 +44,11 @@ export function FcmPayloadModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="relative w-full max-w-2xl bg-[#1D1E1D] border border-[#282928] rounded-2xl shadow-[0_25px_80px_rgba(0,0,0,0.6)] overflow-hidden flex flex-col max-h-[85vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="relative w-full max-w-4xl h-[720px] max-h-[90vh] bg-[#1D1E1D] border border-[#282928] rounded-2xl shadow-[0_25px_80px_rgba(0,0,0,0.6)] overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="px-5 py-4 border-b border-[#282928] flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
+        <div className="px-6 py-4.5 border-b border-[#282928] flex items-center justify-between">
+          <div className="flex items-center gap-3">
             <div className="p-2 rounded-xl bg-[#171817] border border-[#282928] text-[#EDEDED]">
               <Code className="w-4 h-4 text-[#00D085]" />
             </div>
@@ -70,51 +71,30 @@ export function FcmPayloadModal({
         </div>
 
         {/* Format Selector Tabs */}
-        <div className="px-5 pt-3 pb-2 flex items-center gap-2 bg-[#171817] border-b border-[#282928]">
-          <button
-            type="button"
-            onClick={() => setActiveTab("fcm")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
-              activeTab === "fcm"
-                ? "bg-[#1D1E1D] text-[#f8fafc] border border-[#282928] shadow-sm"
-                : "text-[#989A99] hover:text-[#EDEDED]"
-            }`}
-          >
-            Firebase FCM (HTTP v1)
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("apns")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
-              activeTab === "apns"
-                ? "bg-[#1D1E1D] text-[#f8fafc] border border-[#282928] shadow-sm"
-                : "text-[#989A99] hover:text-[#EDEDED]"
-            }`}
-          >
-            Apple APNs Raw
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("onesignal")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
-              activeTab === "onesignal"
-                ? "bg-[#1D1E1D] text-[#f8fafc] border border-[#282928] shadow-sm"
-                : "text-[#989A99] hover:text-[#EDEDED]"
-            }`}
-          >
-            OneSignal API
-          </button>
+        <div className="px-6 py-3 bg-[#171817] border-b border-[#282928] flex items-center">
+          <SlidingTabs<"fcm" | "apns" | "onesignal">
+            value={activeTab}
+            onChange={setActiveTab}
+            options={[
+              { value: "fcm", label: "Firebase FCM (HTTP v1)" },
+              { value: "apns", label: "Apple APNs Raw" },
+              { value: "onesignal", label: "OneSignal API" },
+            ]}
+            className="w-full sm:w-[500px]"
+            size="sm"
+            ariaLabel="Payload format selector"
+          />
         </div>
 
         {/* Code Content */}
-        <div className="relative flex-1 p-5 overflow-auto bg-[#131413]">
-          <pre className="font-mono text-xs text-[#EDEDED] leading-relaxed selection:bg-[#282928]">
+        <div className="relative flex-1 p-6 overflow-auto bg-[#131413]">
+          <pre className="font-mono text-[13px] text-[#EDEDED] leading-relaxed selection:bg-[#282928]">
             {code}
           </pre>
         </div>
 
         {/* Footer Actions */}
-        <div className="px-5 py-3.5 border-t border-[#282928] bg-[#171817] flex items-center justify-between">
+        <div className="px-6 py-4 border-t border-[#282928] bg-[#171817] flex items-center justify-between">
           <span className="text-xs text-[#989A99]">
             {activeTab === "fcm" && "Compatible with Firebase Admin SDK & Postman"}
             {activeTab === "apns" && "Standard Apple Push Notification service dictionary"}
@@ -123,17 +103,17 @@ export function FcmPayloadModal({
           <button
             type="button"
             onClick={handleCopy}
-            className="btn-scale flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#EFF1F0] hover:bg-[#E1E3E2] text-[#252625] font-semibold text-xs transition-colors shadow-sm cursor-pointer"
+            className="btn-scale h-8.5 flex items-center gap-1.5 px-4 rounded-full text-white font-medium text-xs tracking-tight transition-all duration-150 shadow-sm cursor-pointer border border-[#282928] bg-[#1D1E1D] hover:bg-[#252625] hover:border-[#383A38]"
           >
             {copied ? (
               <>
-                <Check className="w-3.5 h-3.5 text-emerald-600" />
-                Copied to Clipboard!
+                <Check className="w-3.5 h-3.5 text-[#00D085]" />
+                <span>Copied</span>
               </>
             ) : (
               <>
-                <Copy className="w-3.5 h-3.5" />
-                Copy Payload
+                <Copy className="w-3.5 h-3.5 text-[#00D085]" />
+                <span>Copy</span>
               </>
             )}
           </button>
