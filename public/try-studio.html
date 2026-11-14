@@ -8484,7 +8484,10 @@ try { if (global.IconLog && typeof global.IconLog.getTargetStore === 'function')
 const isStoreSize = (w === (tStore === 'google' ? 512 : 1024));
 const srcStr = _originalSourceDataUrl || _sourceDataUrl || '';
 const isPngSrc = !srcStr.startsWith('data:') || srcStr.startsWith('data:image/png');
-_bothStoresDone = isSquare && isStoreSize && isPngSrc;
+const isAuditedCompliant = (typeof global.IconLog !== 'undefined' && typeof global.IconLog.isCompliant === 'function')
+? global.IconLog.isCompliant()
+: false;
+_bothStoresDone = isAuditedCompliant || (isSquare && isStoreSize && isPngSrc);
 if (_bothStoresDone) {
 _appliedFitMode = _fitMode;
 } else {
@@ -8509,7 +8512,31 @@ if (passNote) {
 passNote.textContent = '1:1 square · Ratio changes have no effect';
 passNote.style.display = isSquare ? 'inline-block' : 'none';
 }
-const isCurrentModeApplied = !!(_bothStoresDone && (!_appliedFitMode || _appliedFitMode === _fitMode));
+const isAuditedCompliant = (typeof global.IconLog !== 'undefined' && typeof global.IconLog.isCompliant === 'function')
+? global.IconLog.isCompliant()
+: false;
+const isStoreCompliant = isAuditedCompliant || _bothStoresDone;
+const isSquareCompliant = !!(isStoreCompliant && isSquare);
+const isCurrentModeApplied = isSquareCompliant || !!(_bothStoresDone && (!_appliedFitMode || _appliedFitMode === _fitMode));
+if (isCurrentModeApplied) {
+removePrimaryBtnLock();
+if (primaryBtn) {
+primaryBtn.disabled = true;
+primaryBtn.style.display = 'inline-flex';
+const btnText = $('iconActionPrimaryText');
+if (btnText) {
+btnText.textContent = 'Fix & Resize to Store Spec';
+}
+}
+if (statusMsg) {
+const state = _currentAssetKey && _assetStates[_currentAssetKey];
+statusMsg.textContent = (_isTestPreviewMode && state && state.statusMsg)
+? state.statusMsg
+: 'Icon already meets store size requirements.';
+statusMsg.style.display = 'block';
+}
+return;
+}
 if (typeof isDemoMode === 'function' && isDemoMode() && !_isTestPreviewMode) {
 if (primaryBtn) {
 primaryBtn.style.display = 'inline-flex';
@@ -8522,43 +8549,31 @@ return;
 if (_isTestPreviewMode) {
 removePrimaryBtnLock();
 if (primaryBtn) {
-primaryBtn.disabled = isCurrentModeApplied;
+primaryBtn.disabled = false;
 primaryBtn.style.display = 'inline-flex';
 const btnText = $('iconActionPrimaryText');
 if (btnText) {
 btnText.textContent = 'Fix & Resize to Store Spec';
 }
 }
-if (statusMsg) {
-if (isCurrentModeApplied) {
-const state = _currentAssetKey && _assetStates[_currentAssetKey];
-statusMsg.textContent = (state && state.statusMsg) ? state.statusMsg : `Test Preview: Resized to ${_targetStore === 'google' ? '512×512' : '1024×1024'} px (Draft untouched)`;
-statusMsg.style.display = 'block';
-} else {
-statusMsg.style.display = 'none';
-}
-}
+if (statusMsg) statusMsg.style.display = 'none';
 return;
 }
-if (isCurrentModeApplied) {
-if (primaryBtn) {
-primaryBtn.disabled = true;
-primaryBtn.style.display = 'inline-flex';
-}
-if (statusMsg) {
-statusMsg.textContent = 'Icon already meets store size requirements.';
-statusMsg.style.display = 'block';
-}
-} else {
 if (primaryBtn) {
 primaryBtn.disabled = false;
 primaryBtn.style.display = 'inline-flex';
 }
 if (statusMsg) statusMsg.style.display = 'none';
 }
-}
 function updateActionBtn() {
 }
+global.onIconAuditComplete = function(isCompliant) {
+if (isCompliant) {
+_bothStoresDone = true;
+_appliedFitMode = _fitMode;
+}
+updateFitContainerVisibility();
+};
 global.onResizerTargetStoreChanged = function(store) {
 updateLivePreview();
 };
@@ -8840,6 +8855,7 @@ let _logInitialized = false;
 let _targetStore = 'apple';
 let _lastAuditedSrc = '';
 let _lastAuditedMeta = null;
+let _isLastAuditedCompliant = false;
 function $(id) {
 return document.getElementById(id);
 }
@@ -9141,6 +9157,10 @@ const warnCount = issues.filter(i => i.severity === 'warn').length;
 let overallLevel = 'ok';
 if (errCount > 0) overallLevel = 'err';
 else if (warnCount > 0) overallLevel = 'warn';
+_isLastAuditedCompliant = (overallLevel === 'ok');
+if (typeof global.onIconAuditComplete === 'function') {
+global.onIconAuditComplete(_isLastAuditedCompliant);
+}
 if (badgeEl) {
 badgeEl.className = 'icon-modal-badge ' + overallLevel;
 if (overallLevel === 'err') {
@@ -9189,7 +9209,8 @@ global.IconLog = {
 init: initIconLog,
 getTargetStore,
 setTargetStore,
-inspectIcon
+inspectIcon,
+isCompliant: () => _isLastAuditedCompliant
 };
 global.setTargetStore = setTargetStore;
 global.inspectIconAsset = inspectIcon;
