@@ -57,27 +57,6 @@ export function PushPreviewHub() {
             Preview notifications on realistic iPhone & Android device frames before sending.
           </p>
         </div>
-
-        {/* Header Action: Export FCM Button */}
-        <div className="flex items-center gap-3 shrink-0">
-          <button
-            type="button"
-            onClick={() => setIsPayloadOpen(true)}
-            className="btn-scale flex items-center gap-1.5 px-4 py-2 rounded-xl text-white font-semibold text-xs tracking-tight transition-all duration-150 shadow-md cursor-pointer"
-            style={{
-              background:
-                "linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0) 100%), #006636",
-              borderColor: "#1B845E",
-              borderWidth: "1px",
-              borderStyle: "solid",
-              boxShadow:
-                "inset 0 1px 0 0 rgba(255, 255, 255, 0.22), 0 1px 3px 0 rgba(0, 0, 0, 0.3)",
-            }}
-          >
-            <Code className="w-3.5 h-3.5 text-[#00D085]" />
-            Export FCM Payload
-          </button>
-        </div>
       </div>
 
       {/* Main Workspace (Completely Clean & Flat - Zero Layout Shift on Dual View) */}
@@ -93,8 +72,8 @@ export function PushPreviewHub() {
 
         {/* Right Column: Direct Phone Staging */}
         <div className="flex-1 w-full min-w-0 flex flex-col items-center pt-1">
-          {/* Unified Device Controls ABOVE Device: Switcher (iOS / Android / Dual) + Capsule Theme Toggle */}
-          <div className="mb-6 flex flex-wrap items-center justify-center gap-3 z-20">
+          {/* Unified Controls ABOVE Device: Switcher (iOS / Android / Dual) + Theme Toggle + Export FCM */}
+          <div className="mb-6 flex flex-wrap items-center justify-center gap-2.5 z-20">
             <SlidingTabs<DeviceType>
               value={device}
               onChange={handleDeviceChange}
@@ -113,6 +92,16 @@ export function PushPreviewHub() {
               theme={theme}
               onChange={setTheme}
             />
+
+            {/* Export FCM Payload Button */}
+            <button
+              type="button"
+              onClick={() => setIsPayloadOpen(true)}
+              className="btn-scale h-8 flex items-center gap-1.5 px-3.5 rounded-full text-white font-medium text-xs tracking-tight transition-all duration-150 shadow-sm cursor-pointer border border-[#282928] bg-[#1D1E1D] hover:bg-[#252625] hover:border-[#383A38]"
+            >
+              <Code className="w-3.5 h-3.5 text-[#00D085]" />
+              <span>Export FCM Payload</span>
+            </button>
           </div>
 
           {/* Staging Area: Dual View vs Single 3D Flip */}
@@ -122,7 +111,7 @@ export function PushPreviewHub() {
               {/* iPhone Staging */}
               <div className="flex flex-col items-center">
                 <div className="text-[11px] font-mono tracking-widest text-[#989A99] uppercase mb-2">
-                  iPhone Preview
+                  iPhone
                 </div>
                 <IosPreviewCard
                   data={data}
@@ -135,7 +124,7 @@ export function PushPreviewHub() {
               {/* Android Staging */}
               <div className="flex flex-col items-center">
                 <div className="text-[11px] font-mono tracking-widest text-[#989A99] uppercase mb-2">
-                  Android phone Preview
+                  Android
                 </div>
                 <AndroidPreviewCard
                   data={data}
