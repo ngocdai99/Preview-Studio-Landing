@@ -23,41 +23,27 @@ export function AndroidPreviewCard({
   const validButtons = data.buttons.filter((b) => b && b.trim().length > 0);
 
   return (
-    <div
-      className={`relative mx-auto w-full max-w-[340px] h-[650px] rounded-[48px] p-[2.5px] select-none transition-all duration-300 ${
-        isLight
-          ? "border-[3.5px] border-[#cbd5e1] bg-[#e2e8f0] shadow-[0_25px_70px_rgba(0,0,0,0.65),0_0_0_1px_rgba(255,255,255,0.4)] ring-1 ring-black/10"
-          : "border-[3.5px] border-[#3a3c44] bg-[#1c1d22] shadow-[0_25px_70px_rgba(0,0,0,0.85)] ring-1 ring-white/10"
-      }`}
-    >
-      {/* Outer Physical Hardware Buttons for Android */}
+    <div className="relative mx-auto w-full max-w-[340px] h-[650px] rounded-[48px] p-[2.5px] border-[3.5px] border-[#383b42] bg-[#1d1f24] shadow-[0_25px_65px_-12px_rgba(0,0,0,0.85)] ring-1 ring-white/[0.16] select-none transition-all duration-300">
+      {/* Outer Physical Hardware Buttons for Android (Brushed Titanium Hardware) */}
       {/* Right Edge: Power Button */}
-      <div
-        className={`absolute -right-[9.5px] top-[150px] w-[3.5px] h-[36px] rounded-r-sm shadow-sm pointer-events-none transition-colors duration-300 ${
-          isLight ? "bg-[#94a3b8]" : "bg-[#3a3c42]"
-        }`}
-      />
+      <div className="absolute -right-[9.5px] top-[150px] w-[3.5px] h-[36px] rounded-r-sm bg-[#383b42] border-r border-white/10 shadow-sm pointer-events-none" />
       {/* Right Edge: Volume Rocker Button */}
-      <div
-        className={`absolute -right-[9.5px] top-[204px] w-[3.5px] h-[68px] rounded-r-sm shadow-sm pointer-events-none transition-colors duration-300 ${
-          isLight ? "bg-[#94a3b8]" : "bg-[#3a3c42]"
-        }`}
-      />
+      <div className="absolute -right-[9.5px] top-[204px] w-[3.5px] h-[68px] rounded-r-sm bg-[#383b42] border-r border-white/10 shadow-sm pointer-events-none" />
 
-      {/* Screen Inner Container (Cleanly Clipped Display with Authentic Black Bezel) */}
-      <div className="relative w-full h-full rounded-[41px] p-[3.5px] bg-[#000000] flex flex-col overflow-hidden">
+      {/* Screen Inner Container (Cleanly Clipped Display with Authentic Black Glass Bezel) */}
+      <div className="relative w-full h-full rounded-[41px] p-[4.5px] bg-[#000000] flex flex-col overflow-hidden">
         <div className="relative w-full h-full rounded-[37px] overflow-hidden flex flex-col">
           {/* Front Camera Hole-punch */}
           <div className="absolute top-3 left-1/2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-black z-30 border border-[#1a1a1a]" />
 
-        {/* Screen Background (Google Pixel Material You Dark vs Light Wallpaper) */}
-        <div
-          className={`absolute inset-0 z-0 transition-opacity duration-300 ${
-            isLight
-              ? "bg-gradient-to-b from-[#e2e8f0] via-[#f1f3f8] to-[#ffffff]"
-              : "bg-gradient-to-b from-[#181a1f] via-[#131417] to-[#0c0d0f]"
-          }`}
-        />
+          {/* Screen Background (Google Pixel Material You Neutral Light vs Dark Wallpaper) */}
+          <div
+            className={`absolute inset-0 z-0 transition-opacity duration-300 ${
+              isLight
+                ? "bg-gradient-to-b from-[#e8eaed] via-[#f1f3f4] to-[#e4e7ea]"
+                : "bg-gradient-to-b from-[#181a1f] via-[#131417] to-[#0c0d0f]"
+            }`}
+          />
 
         {/* Android Status Bar with Authentic Vector Icons */}
         <div
