@@ -12,7 +12,7 @@ import { AndroidPreviewCard } from "./AndroidPreviewCard";
 import { FcmPayloadModal } from "./FcmPayloadModal";
 import { FunnelFooterBanner } from "./FunnelFooterBanner";
 import { SlidingTabs } from "@/components/ui/SlidingTabs";
-import { Smartphone, Code, Maximize2, Minimize2 } from "lucide-react";
+import { Smartphone, Code } from "lucide-react";
 
 export function PushPreviewHub() {
   const [data, setData] = useState<PushNotificationData>(DEFAULT_PUSH_DATA);
@@ -26,10 +26,10 @@ export function PushPreviewHub() {
 
   return (
     <div className="w-full flex flex-col items-center bg-[#131413] text-[#f8fafc]">
-      {/* Top Controls Bar */}
-      <div className="w-full max-w-6xl px-4 sm:px-6 pt-8 pb-5 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#282928]">
+      {/* Top Header Bar */}
+      <div className="w-full max-w-7xl px-4 sm:px-6 pt-8 pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#282928]">
         <div>
-          <div className="flex items-center gap-2 mb-1.5">
+          <div className="flex items-center gap-2 mb-1">
             <span className="text-[11px] font-mono tracking-widest text-[#989A99] uppercase">
               Free Developer Tool
             </span>
@@ -37,59 +37,16 @@ export function PushPreviewHub() {
               Client-Side Local
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#f8fafc]">
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#f8fafc]">
             Push Notification Visual Preview
           </h1>
-          <p className="text-xs sm:text-sm text-[#989A99] mt-1 max-w-xl">
-            Test realistic iPhone lock screen and Android notification layouts, verify character truncation limits, and export instant FCM v1 payloads.
+          <p className="text-xs text-[#989A99] mt-0.5">
+            Preview notifications on realistic iPhone & Android device frames before sending.
           </p>
         </div>
 
-        {/* Global Toolbar with SlidingTabs */}
-        <div className="flex items-center gap-3 flex-wrap">
-          {/* Device Switcher (Pure CSS SlidingTabs matching Features Card) */}
-          <SlidingTabs<DeviceType>
-            value={device}
-            onChange={(val) => setDevice(val as DeviceType)}
-            options={[
-              {
-                value: "ios",
-                label: "iPhone",
-                icon: <Smartphone className="w-3.5 h-3.5" />,
-              },
-              {
-                value: "android",
-                label: "Android phone",
-                icon: <Smartphone className="w-3.5 h-3.5" />,
-              },
-            ]}
-            className="w-[230px] sm:w-[250px] shrink-0"
-            size="sm"
-            ariaLabel="Device selector tabs"
-          />
-
-          {/* View Mode Switcher (Compact vs Expanded) */}
-          <SlidingTabs<"compact" | "expanded">
-            value={expanded ? "expanded" : "compact"}
-            onChange={(val) => setExpanded(val === "expanded")}
-            options={[
-              {
-                value: "compact",
-                label: "Compact",
-                icon: <Minimize2 className="w-3.5 h-3.5" />,
-              },
-              {
-                value: "expanded",
-                label: "Expanded",
-                icon: <Maximize2 className="w-3.5 h-3.5" />,
-              },
-            ]}
-            className="w-[180px] sm:w-[195px] shrink-0"
-            size="sm"
-            ariaLabel="View mode selector tabs"
-          />
-
-          {/* Export Payload Button (Supabase signature emerald styling) */}
+        {/* Header Action: Export FCM Button */}
+        <div className="flex items-center gap-3 shrink-0">
           <button
             type="button"
             onClick={() => setIsPayloadOpen(true)}
@@ -110,10 +67,10 @@ export function PushPreviewHub() {
         </div>
       </div>
 
-      {/* Main 2-Column Workspace */}
-      <div className="w-full max-w-6xl px-4 sm:px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left Column: Form Controls (7 cols) */}
-        <div className="lg:col-span-7 bg-[#1D1E1D] border border-[#282928] rounded-2xl p-5 sm:p-6 shadow-[0_4px_24px_rgba(0,0,0,0.25)]">
+      {/* Main Workspace (Completely Clean & Flat - No Enclosing Outer Cards) */}
+      <div className="w-full max-w-7xl px-4 sm:px-6 py-8 flex flex-col lg:flex-row gap-8 lg:gap-16 items-start justify-center">
+        {/* Left Column: Clean Unboxed Form */}
+        <div className="w-full lg:w-[380px] xl:w-[410px] shrink-0">
           <PushFormEditor
             data={data}
             onChange={setData}
@@ -121,31 +78,47 @@ export function PushPreviewHub() {
           />
         </div>
 
-        {/* Right Column: Device Screen Preview (5 cols) */}
-        <div className="lg:col-span-5 lg:sticky lg:top-24 flex flex-col items-center">
-          <div className="w-full max-w-[340px] flex items-center justify-between px-2 mb-3 text-xs text-[#989A99]">
-            <span className="font-mono text-[11px] uppercase tracking-wider">
-              {device === "ios" ? "iPhone Preview" : "Android Preview"}
-            </span>
-            <span className="text-[11px] font-medium text-[#989A99]">
-              {expanded ? "Expanded Mode" : "Compact Mode"}
-            </span>
+        {/* Right Column: Direct Phone Staging (Free-standing, No Enclosing Canvas Box) */}
+        <div className="flex-1 w-full min-w-0 flex flex-col items-center justify-center pt-1">
+          {/* Active Device Mockup Standing Directly on Background */}
+          <div className="w-full flex justify-center py-2">
+            {device === "ios" ? (
+              <IosPreviewCard
+                data={data}
+                expanded={expanded}
+                onToggleExpand={() => setExpanded(!expanded)}
+              />
+            ) : (
+              <AndroidPreviewCard
+                data={data}
+                expanded={expanded}
+                onToggleExpand={() => setExpanded(!expanded)}
+              />
+            )}
           </div>
 
-          {/* Active Device Mockup */}
-          {device === "ios" ? (
-            <IosPreviewCard
-              data={data}
-              expanded={expanded}
-              onToggleExpand={() => setExpanded(!expanded)}
+          {/* Device Switcher Placed Directly Below Device Mockup (OneSignal Style) */}
+          <div className="mt-5 flex items-center justify-center">
+            <SlidingTabs<DeviceType>
+              value={device}
+              onChange={(val) => setDevice(val as DeviceType)}
+              options={[
+                {
+                  value: "ios",
+                  label: "iPhone",
+                  icon: <Smartphone className="w-3.5 h-3.5" />,
+                },
+                {
+                  value: "android",
+                  label: "Android phone",
+                  icon: <Smartphone className="w-3.5 h-3.5" />,
+                },
+              ]}
+              className="w-[230px] sm:w-[250px] shrink-0"
+              size="sm"
+              ariaLabel="Device selector tabs"
             />
-          ) : (
-            <AndroidPreviewCard
-              data={data}
-              expanded={expanded}
-              onToggleExpand={() => setExpanded(!expanded)}
-            />
-          )}
+          </div>
         </div>
       </div>
 
