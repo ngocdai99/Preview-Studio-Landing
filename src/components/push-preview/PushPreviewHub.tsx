@@ -14,7 +14,7 @@ import { DeviceThemeToggle } from "./DeviceThemeToggle";
 import { FcmPayloadModal } from "./FcmPayloadModal";
 import { FunnelFooterBanner } from "./FunnelFooterBanner";
 import { SlidingTabs } from "@/components/ui/SlidingTabs";
-import { Smartphone, Code, Columns2 } from "lucide-react";
+import { Code } from "lucide-react";
 
 export function PushPreviewHub() {
   const [data, setData] = useState<PushNotificationData>(DEFAULT_PUSH_DATA);
@@ -184,23 +184,11 @@ export function PushPreviewHub() {
               value={device}
               onChange={handleDeviceChange}
               options={[
-                {
-                  value: "ios",
-                  label: "iPhone",
-                  icon: <Smartphone className="w-3.5 h-3.5" />,
-                },
-                {
-                  value: "android",
-                  label: "Android phone",
-                  icon: <Smartphone className="w-3.5 h-3.5" />,
-                },
-                {
-                  value: "dual",
-                  label: "Dual View",
-                  icon: <Columns2 className="w-3.5 h-3.5" />,
-                },
+                { value: "ios", label: "iOS" },
+                { value: "android", label: "Android" },
+                { value: "dual", label: "Dual" },
               ]}
-              className="w-[315px] sm:w-[350px] shrink-0"
+              className="w-[230px] sm:w-[250px] shrink-0"
               size="sm"
               ariaLabel="Device selector tabs"
             />
