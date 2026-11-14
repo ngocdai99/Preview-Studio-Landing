@@ -121,17 +121,19 @@ export function AndroidPreviewCard({
           )}
 
           {/* Expanded Action Buttons (Material You Pills) */}
-          {expanded && data.buttons.length > 0 && (
+          {expanded && data.buttons.filter((b) => b && b.trim().length > 0).length > 0 && (
             <div className="mt-3 flex flex-wrap gap-2 pt-2 border-t border-[#2d3139]">
-              {data.buttons.map((btn, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  className="px-3 py-1 rounded-full text-[11px] font-medium text-[#a8c7fa] border border-[#444746] hover:bg-white/5 transition-colors"
-                >
-                  {btn}
-                </button>
-              ))}
+              {data.buttons
+                .filter((b) => b && b.trim().length > 0)
+                .map((btn, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    className="px-3 py-1 rounded-full text-[11px] font-medium text-[#a8c7fa] border border-[#444746] hover:bg-white/5 transition-colors"
+                  >
+                    {btn}
+                  </button>
+                ))}
             </div>
           )}
         </div>

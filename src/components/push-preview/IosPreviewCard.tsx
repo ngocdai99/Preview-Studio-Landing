@@ -122,17 +122,19 @@ export function IosPreviewCard({
           )}
 
           {/* Expanded Action Buttons (iOS Frosted Glass Pills) */}
-          {expanded && data.buttons.length > 0 && (
+          {expanded && data.buttons.filter((b) => b && b.trim().length > 0).length > 0 && (
             <div className="mt-3 grid grid-cols-2 gap-1.5 pt-2 border-t border-white/10">
-              {data.buttons.map((btn, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  className="w-full py-1.5 px-2 rounded-xl bg-white/[0.16] hover:bg-white/[0.26] text-[11px] font-medium text-white text-center transition-colors shadow-sm"
-                >
-                  {btn}
-                </button>
-              ))}
+              {data.buttons
+                .filter((b) => b && b.trim().length > 0)
+                .map((btn, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    className="w-full py-1.5 px-2 rounded-xl bg-white/[0.16] hover:bg-white/[0.26] text-[11px] font-medium text-white text-center transition-colors shadow-sm"
+                  >
+                    {btn}
+                  </button>
+                ))}
             </div>
           )}
         </div>
