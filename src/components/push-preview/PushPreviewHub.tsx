@@ -11,6 +11,7 @@ import { IosPreviewCard } from "./IosPreviewCard";
 import { AndroidPreviewCard } from "./AndroidPreviewCard";
 import { FcmPayloadModal } from "./FcmPayloadModal";
 import { FunnelFooterBanner } from "./FunnelFooterBanner";
+import { SlidingTabs } from "@/components/ui/SlidingTabs";
 import { Smartphone, Code, Maximize2, Minimize2 } from "lucide-react";
 
 export function PushPreviewHub() {
@@ -44,55 +45,49 @@ export function PushPreviewHub() {
           </p>
         </div>
 
-        {/* Global Toolbar */}
-        <div className="flex items-center gap-2.5 flex-wrap">
-          {/* Device Switcher */}
-          <div className="p-1 rounded-xl bg-[#1D1E1D] border border-[#282928] flex items-center shadow-sm">
-            <button
-              type="button"
-              onClick={() => setDevice("ios")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 cursor-pointer ${
-                device === "ios"
-                  ? "bg-white text-[#0f172a] shadow-sm"
-                  : "text-[#989A99] hover:text-[#EDEDED]"
-              }`}
-            >
-              <Smartphone className="w-3.5 h-3.5" />
-              iPhone
-            </button>
-            <button
-              type="button"
-              onClick={() => setDevice("android")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 cursor-pointer ${
-                device === "android"
-                  ? "bg-white text-[#0f172a] shadow-sm"
-                  : "text-[#989A99] hover:text-[#EDEDED]"
-              }`}
-            >
-              <Smartphone className="w-3.5 h-3.5" />
-              Android phone
-            </button>
-          </div>
+        {/* Global Toolbar with SlidingTabs */}
+        <div className="flex items-center gap-3 flex-wrap">
+          {/* Device Switcher (Pure CSS SlidingTabs matching Features Card) */}
+          <SlidingTabs<DeviceType>
+            value={device}
+            onChange={(val) => setDevice(val as DeviceType)}
+            options={[
+              {
+                value: "ios",
+                label: "iPhone",
+                icon: <Smartphone className="w-3.5 h-3.5" />,
+              },
+              {
+                value: "android",
+                label: "Android phone",
+                icon: <Smartphone className="w-3.5 h-3.5" />,
+              },
+            ]}
+            className="w-[230px] sm:w-[250px] shrink-0"
+            size="sm"
+            ariaLabel="Device selector tabs"
+          />
 
-          {/* Expand / Collapse toggle */}
-          <button
-            type="button"
-            onClick={() => setExpanded(!expanded)}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#1D1E1D] hover:bg-[#222322] border border-[#282928] text-xs font-medium text-[#EDEDED] transition-colors shadow-sm cursor-pointer"
-            title={expanded ? "Collapse to single line view" : "Expand to media view"}
-          >
-            {expanded ? (
-              <>
-                <Minimize2 className="w-3.5 h-3.5 text-[#989A99]" />
-                <span className="hidden sm:inline">Compact</span>
-              </>
-            ) : (
-              <>
-                <Maximize2 className="w-3.5 h-3.5 text-[#989A99]" />
-                <span className="hidden sm:inline">Expanded</span>
-              </>
-            )}
-          </button>
+          {/* View Mode Switcher (Compact vs Expanded) */}
+          <SlidingTabs<"compact" | "expanded">
+            value={expanded ? "expanded" : "compact"}
+            onChange={(val) => setExpanded(val === "expanded")}
+            options={[
+              {
+                value: "compact",
+                label: "Compact",
+                icon: <Minimize2 className="w-3.5 h-3.5" />,
+              },
+              {
+                value: "expanded",
+                label: "Expanded",
+                icon: <Maximize2 className="w-3.5 h-3.5" />,
+              },
+            ]}
+            className="w-[180px] sm:w-[195px] shrink-0"
+            size="sm"
+            ariaLabel="View mode selector tabs"
+          />
 
           {/* Export Payload Button (Supabase signature emerald styling) */}
           <button
