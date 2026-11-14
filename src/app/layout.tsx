@@ -111,7 +111,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full scroll-smooth dark" data-theme="dark">
+    <html
+      lang="en"
+      className="h-full scroll-smooth dark"
+      data-theme="dark"
+      data-scroll-behavior="smooth"
+    >
       <body className="min-h-full flex flex-col font-sans bg-background text-foreground antialiased">
         <script
           type="application/ld+json"
