@@ -4,11 +4,13 @@ import React, { useState } from "react";
 import {
   PushNotificationData,
   DeviceType,
+  PreviewTheme,
   DEFAULT_PUSH_DATA,
 } from "./types";
 import { PushFormEditor } from "./PushFormEditor";
 import { IosPreviewCard } from "./IosPreviewCard";
 import { AndroidPreviewCard } from "./AndroidPreviewCard";
+import { DeviceThemeToggle } from "./DeviceThemeToggle";
 import { FcmPayloadModal } from "./FcmPayloadModal";
 import { FunnelFooterBanner } from "./FunnelFooterBanner";
 import { SlidingTabs } from "@/components/ui/SlidingTabs";
@@ -17,6 +19,7 @@ import { Smartphone, Code } from "lucide-react";
 export function PushPreviewHub() {
   const [data, setData] = useState<PushNotificationData>(DEFAULT_PUSH_DATA);
   const [device, setDevice] = useState<DeviceType>("ios");
+  const [theme, setTheme] = useState<PreviewTheme>("dark");
   const [expanded, setExpanded] = useState<boolean>(true);
   const [isPayloadOpen, setIsPayloadOpen] = useState<boolean>(false);
 
@@ -78,27 +81,59 @@ export function PushPreviewHub() {
           />
         </div>
 
-        {/* Right Column: Direct Phone Staging (Free-standing, No Enclosing Canvas Box) */}
+        {/* Right Column: Direct Phone Staging with 3D Flip Card Animation */}
         <div className="flex-1 w-full min-w-0 flex flex-col items-center justify-center pt-1">
-          {/* Active Device Mockup Standing Directly on Background */}
-          <div className="w-full flex justify-center py-2">
-            {device === "ios" ? (
-              <IosPreviewCard
-                data={data}
-                expanded={expanded}
-                onToggleExpand={() => setExpanded(!expanded)}
-              />
-            ) : (
-              <AndroidPreviewCard
-                data={data}
-                expanded={expanded}
-                onToggleExpand={() => setExpanded(!expanded)}
-              />
-            )}
+          {/* 3D Perspective Stage Container */}
+          <div
+            className="w-full flex justify-center py-2"
+            style={{ perspective: "1400px" }}
+          >
+            {/* 3D Flipping Card Anchor */}
+            <div
+              className="relative w-full max-w-[340px] h-[650px] transition-transform duration-700 ease-[cubic-bezier(0.34,1.4,0.64,1)] will-change-transform"
+              style={{
+                transformStyle: "preserve-3d",
+                WebkitTransformStyle: "preserve-3d",
+                transform: device === "android" ? "rotateY(180deg)" : "rotateY(0deg)",
+              }}
+            >
+              {/* Front Face: iPhone Mockup */}
+              <div
+                className="absolute inset-0 w-full h-full"
+                style={{
+                  backfaceVisibility: "hidden",
+                  WebkitBackfaceVisibility: "hidden",
+                }}
+              >
+                <IosPreviewCard
+                  data={data}
+                  theme={theme}
+                  expanded={expanded}
+                  onToggleExpand={() => setExpanded(!expanded)}
+                />
+              </div>
+
+              {/* Back Face: Android Phone Mockup (Rotated 180deg) */}
+              <div
+                className="absolute inset-0 w-full h-full"
+                style={{
+                  backfaceVisibility: "hidden",
+                  WebkitBackfaceVisibility: "hidden",
+                  transform: "rotateY(180deg)",
+                }}
+              >
+                <AndroidPreviewCard
+                  data={data}
+                  theme={theme}
+                  expanded={expanded}
+                  onToggleExpand={() => setExpanded(!expanded)}
+                />
+              </div>
+            </div>
           </div>
 
-          {/* Device Switcher Placed Directly Below Device Mockup (OneSignal Style) */}
-          <div className="mt-5 flex items-center justify-center">
+          {/* Unified Device Controls: Device Switcher + Capsule Theme Toggle */}
+          <div className="mt-5 flex items-center justify-center gap-3">
             <SlidingTabs<DeviceType>
               value={device}
               onChange={(val) => setDevice(val as DeviceType)}
@@ -117,6 +152,12 @@ export function PushPreviewHub() {
               className="w-[230px] sm:w-[250px] shrink-0"
               size="sm"
               ariaLabel="Device selector tabs"
+            />
+
+            {/* Device Theme Toggle (Sun/Moon Capsule Switch from Core) */}
+            <DeviceThemeToggle
+              theme={theme}
+              onChange={setTheme}
             />
           </div>
         </div>
