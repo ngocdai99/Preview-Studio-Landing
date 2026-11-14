@@ -123,7 +123,7 @@ export const en = {
         icon: "shieldCheck" as const,
         title: "Smart Size & Compliance Detection",
         description:
-          "Automatically verifies screenshot dimensions against official App Store & Google Play guidelines. Warns you instantly about invalid aspect ratios and illegal iOS icon transparency (alpha channels).",
+          "Automatically verifies screenshot and icon dimensions against official App Store & Google Play guidelines. Inspects alpha channels and auto-resizes app icons to 1024×1024 px & 512×512 px store specifications.",
         badge: "Automated QA",
       },
       {
@@ -243,7 +243,7 @@ export const en = {
     scopeNote: {
       coveredLabel: "What’s covered:",
       covered:
-        "All customer-facing store listing fields: titles, subtitles, descriptions, release notes, phone & tablet screenshots, app icons, age ratings, in-app purchase tags, and App Privacy & Data Safety cards across iOS and Android.",
+        "All customer-facing store listing fields: titles, subtitles, descriptions, release notes, phone & tablet screenshots, app icon validation & auto-resizing (1024×1024 & 512×512 px), age ratings, in-app purchase tags, and App Privacy & Data Safety cards across iOS and Android.",
       notCoveredLabel: "What’s not covered:",
       notCovered:
         "It is a visual preview & metadata drafting studio — it does not compile or upload binary builds (.ipa/.aab) and does not require developer login access to App Store Connect or Google Play Console.",
@@ -263,6 +263,7 @@ export const en = {
         },
         features: [
           { text: "1-Click Live App Cloner (App Store)" },
+          { text: "App Icon Verification & Auto Store Resizer" },
           { text: "iPhone, iPad & Android Hardware Bezels" },
           { text: "Clean 4K Ultra HD Export", tag: "No Watermark" },
           { text: "Private Offline Single-File Studio", tag: ".html" },
