@@ -2,7 +2,8 @@
 
 import React from "react";
 import { PushNotificationData, PreviewTheme } from "./types";
-import { Wifi, Signal, Battery, ChevronUp } from "lucide-react";
+import { useDeviceClock } from "./useDeviceClock";
+import { ChevronUp } from "lucide-react";
 
 interface AndroidPreviewCardProps {
   data: PushNotificationData;
@@ -18,6 +19,7 @@ export function AndroidPreviewCard({
   onToggleExpand,
 }: AndroidPreviewCardProps) {
   const isLight = theme === "light";
+  const clock = useDeviceClock();
   const validButtons = data.buttons.filter((b) => b && b.trim().length > 0);
 
   return (
@@ -42,39 +44,82 @@ export function AndroidPreviewCard({
           }`}
         />
 
-        {/* Android Status Bar */}
+        {/* Android Status Bar with Authentic Vector Icons */}
         <div
           className={`relative z-10 pt-3 px-6 flex items-center justify-between text-[11px] font-medium tracking-normal transition-colors duration-200 ${
             isLight ? "text-[#444746]" : "text-[#c4c7c5]"
           }`}
         >
           <div className="flex items-center gap-1.5">
-            <span className={`font-semibold ${isLight ? "text-[#1f1f1f]" : "text-white"}`}>
-              10:00
+            <span
+              className={`font-semibold ${
+                isLight ? "text-[#1f1f1f]" : "text-white"
+              }`}
+            >
+              {clock.time}
             </span>
           </div>
-          <div className="flex items-center gap-2">
-            <Signal className="w-3 h-3" />
-            <Wifi className="w-3 h-3" />
-            <Battery className="w-3.5 h-3.5" />
+          <div className="flex items-center gap-1.5">
+            {/* Cellular Signal (4 solid ascending bars) */}
+            <svg
+              className="w-[16px] h-[10.5px]"
+              viewBox="0 0 16 11"
+              fill="currentColor"
+            >
+              <rect x="0.5" y="7.5" width="2.5" height="3" rx="0.6" />
+              <rect x="4.5" y="5" width="2.5" height="5.5" rx="0.6" />
+              <rect x="8.5" y="2.5" width="2.5" height="8" rx="0.6" />
+              <rect x="12.5" y="0" width="2.5" height="10.5" rx="0.6" />
+            </svg>
+
+            {/* Wi-Fi Icon (dot + 2 concentric arcs) */}
+            <svg
+              className="w-[15px] h-[11px]"
+              viewBox="0 0 16 12"
+              fill="none"
+            >
+              <circle cx="8" cy="9.8" r="1.1" fill="currentColor" />
+              <path
+                d="M5 6.8a4.2 4.2 0 0 1 6 0"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+              <path
+                d="M2.2 4a8.2 8.2 0 0 1 11.6 0"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+            </svg>
+
+            {/* Battery Icon (solid body with rounded terminal nub) */}
+            <svg
+              className="w-[20px] h-[10.5px] ml-0.5"
+              viewBox="0 0 22 11"
+              fill="currentColor"
+            >
+              <rect x="0" y="0" width="18.5" height="11" rx="3" />
+              <path d="M19.5 3.3c.7 0 1.2.6 1.2 1.3v1.8c0 .7-.5 1.3-1.2 1.3v-4.4z" />
+            </svg>
           </div>
         </div>
 
-        {/* Subtle Clock Header */}
+        {/* Subtle Clock Header (Live synchronized) */}
         <div className="relative z-10 pt-6 pb-2 text-center">
           <div
             className={`text-[48px] font-light leading-none tracking-tight font-sans transition-colors duration-200 ${
               isLight ? "text-[#1f1f1f]" : "text-[#e3e3e3]"
             }`}
           >
-            10:00
+            {clock.time}
           </div>
           <div
             className={`text-[11px] mt-1 font-medium transition-colors duration-200 ${
               isLight ? "text-[#444746]" : "text-[#8e918f]"
             }`}
           >
-            Sat, Nov 15
+            {clock.shortDate}
           </div>
         </div>
 
@@ -125,16 +170,26 @@ export function AndroidPreviewCard({
                 >
                   {data.appName || "App Name"}
                 </span>
-                <span className={`text-[10px] ${isLight ? "text-[#747775]" : "text-[#8e918f]"}`}>
+                <span
+                  className={`text-[10px] ${
+                    isLight ? "text-[#747775]" : "text-[#8e918f]"
+                  }`}
+                >
                   •
                 </span>
-                <span className={`text-[10px] ${isLight ? "text-[#747775]" : "text-[#8e918f]"}`}>
+                <span
+                  className={`text-[10px] ${
+                    isLight ? "text-[#747775]" : "text-[#8e918f]"
+                  }`}
+                >
                   2m
                 </span>
               </div>
               <div
                 className={`transition-transform duration-300 ${
-                  isLight ? "text-[#747775] group-hover:text-[#1f1f1f]" : "text-[#8e918f] group-hover:text-white"
+                  isLight
+                    ? "text-[#747775] group-hover:text-[#1f1f1f]"
+                    : "text-[#8e918f] group-hover:text-white"
                 } ${expanded ? "rotate-0" : "rotate-180"}`}
               >
                 <ChevronUp className="w-3.5 h-3.5" />
@@ -242,7 +297,7 @@ export function AndroidPreviewCard({
               className={`text-[10px] uppercase tracking-wider font-mono cursor-pointer transition-colors ${
                 isLight
                   ? "text-[#747775] hover:text-[#1f1f1f]"
-                  : "text-[#8e918f] hover:text-[#c4c7c5]"
+                : "text-[#8e918f] hover:text-[#c4c7c5]"
               }`}
             >
               {expanded ? "▲ Tap card to collapse" : "▼ Tap card to expand"}

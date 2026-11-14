@@ -2,7 +2,8 @@
 
 import React from "react";
 import { PushNotificationData, PreviewTheme } from "./types";
-import { Wifi, Signal, Battery, Flashlight, Camera, Lock } from "lucide-react";
+import { useDeviceClock } from "./useDeviceClock";
+import { Flashlight, Camera, Lock } from "lucide-react";
 
 interface IosPreviewCardProps {
   data: PushNotificationData;
@@ -18,6 +19,7 @@ export function IosPreviewCard({
   onToggleExpand,
 }: IosPreviewCardProps) {
   const isLight = theme === "light";
+  const clock = useDeviceClock();
   const validButtons = data.buttons.filter((b) => b && b.trim().length > 0);
 
   return (
@@ -49,21 +51,60 @@ export function IosPreviewCard({
           }`}
         />
 
-        {/* Status Bar */}
+        {/* Authentic iOS Status Bar with 4-Bar Signal, Wi-Fi & Battery */}
         <div
           className={`relative z-10 pt-3 px-7 flex items-center justify-between text-[11px] font-semibold tracking-tight transition-colors duration-200 ${
             isLight ? "text-[#1c1c1e]" : "text-white/90"
           }`}
         >
-          <span>9:41</span>
+          <span>{clock.time}</span>
           <div className="flex items-center gap-1.5">
-            <Signal className="w-3.5 h-3.5" />
-            <Wifi className="w-3.5 h-3.5" />
-            <Battery className="w-4 h-4" />
+            {/* Cellular Signal (4 ascending solid bars) */}
+            <svg
+              className="w-[16px] h-[10.5px]"
+              viewBox="0 0 16 11"
+              fill="currentColor"
+            >
+              <rect x="0.5" y="7.5" width="2.5" height="3" rx="0.6" />
+              <rect x="4.5" y="5" width="2.5" height="5.5" rx="0.6" />
+              <rect x="8.5" y="2.5" width="2.5" height="8" rx="0.6" />
+              <rect x="12.5" y="0" width="2.5" height="10.5" rx="0.6" />
+            </svg>
+
+            {/* Wi-Fi Icon (dot + 2 concentric arcs) */}
+            <svg
+              className="w-[15px] h-[11px]"
+              viewBox="0 0 16 12"
+              fill="none"
+            >
+              <circle cx="8" cy="9.8" r="1.1" fill="currentColor" />
+              <path
+                d="M5 6.8a4.2 4.2 0 0 1 6 0"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+              <path
+                d="M2.2 4a8.2 8.2 0 0 1 11.6 0"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+            </svg>
+
+            {/* Battery Icon (solid body with rounded terminal nub) */}
+            <svg
+              className="w-[20px] h-[10.5px] ml-0.5"
+              viewBox="0 0 22 11"
+              fill="currentColor"
+            >
+              <rect x="0" y="0" width="18.5" height="11" rx="3" />
+              <path d="M19.5 3.3c.7 0 1.2.6 1.2 1.3v1.8c0 .7-.5 1.3-1.2 1.3v-4.4z" />
+            </svg>
           </div>
         </div>
 
-        {/* Lockscreen Clock & Date */}
+        {/* Lockscreen Clock & Date (Live synchronized) */}
         <div className="relative z-10 pt-9 pb-4 flex flex-col items-center">
           <div
             className={`flex items-center gap-1.5 text-[11px] font-medium tracking-wide uppercase transition-colors duration-200 ${
@@ -73,14 +114,14 @@ export function IosPreviewCard({
             <Lock
               className={`w-3 h-3 ${isLight ? "text-[#1c1c1e]/60" : "text-white/60"}`}
             />
-            <span>Saturday, Nov 15</span>
+            <span>{clock.fullDate}</span>
           </div>
           <div
             className={`text-[68px] font-light leading-none tracking-tight mt-1 font-sans drop-shadow-md transition-colors duration-200 ${
               isLight ? "text-[#1c1c1e]" : "text-white/95"
             }`}
           >
-            9:41
+            {clock.time}
           </div>
         </div>
 
