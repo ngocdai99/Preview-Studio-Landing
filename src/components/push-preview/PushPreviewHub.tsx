@@ -40,7 +40,7 @@ export function PushPreviewHub() {
   return (
     <div className="w-full flex flex-col items-center bg-[#131413] text-[#f8fafc]">
       {/* Top Header Bar */}
-      <div className="w-full max-w-7xl px-4 sm:px-6 pt-8 pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#282928]">
+      <div className="w-full max-w-7xl xl:max-w-[1360px] px-4 sm:px-6 pt-8 pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#282928]">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="text-[11px] font-mono tracking-widest text-[#989A99] uppercase">
@@ -80,14 +80,10 @@ export function PushPreviewHub() {
         </div>
       </div>
 
-      {/* Main Workspace (Completely Clean & Flat - No Enclosing Outer Cards) */}
-      <div
-        className={`w-full ${
-          device === "dual" ? "max-w-[1440px]" : "max-w-7xl"
-        } px-4 sm:px-6 py-8 flex flex-col lg:flex-row gap-8 lg:gap-12 items-start justify-center transition-all duration-300`}
-      >
-        {/* Left Column: Clean Unboxed Form */}
-        <div className="w-full lg:w-[370px] xl:w-[400px] shrink-0">
+      {/* Main Workspace (Completely Clean & Flat - Zero Layout Shift on Dual View) */}
+      <div className="w-full max-w-7xl xl:max-w-[1360px] px-4 sm:px-6 py-8 flex flex-col lg:flex-row gap-8 lg:gap-10 xl:gap-12 items-start justify-start">
+        {/* Left Column: Clean Unboxed Form (Anchored Position) */}
+        <div className="w-full lg:w-[370px] xl:w-[390px] shrink-0">
           <PushFormEditor
             data={data}
             onChange={setData}
@@ -95,8 +91,31 @@ export function PushPreviewHub() {
           />
         </div>
 
-        {/* Right Column: Direct Phone Staging (Single 3D Flip vs Dual View) */}
-        <div className="flex-1 w-full min-w-0 flex flex-col items-center justify-center pt-1">
+        {/* Right Column: Direct Phone Staging */}
+        <div className="flex-1 w-full min-w-0 flex flex-col items-center pt-1">
+          {/* Unified Device Controls ABOVE Device: Switcher (iOS / Android / Dual) + Capsule Theme Toggle */}
+          <div className="mb-6 flex flex-wrap items-center justify-center gap-3 z-20">
+            <SlidingTabs<DeviceType>
+              value={device}
+              onChange={handleDeviceChange}
+              options={[
+                { value: "ios", label: "iOS" },
+                { value: "android", label: "Android" },
+                { value: "dual", label: "Dual" },
+              ]}
+              className="w-[230px] sm:w-[250px] shrink-0"
+              size="sm"
+              ariaLabel="Device selector tabs"
+            />
+
+            {/* Device Theme Toggle (Sun/Moon Capsule Switch from Core) */}
+            <DeviceThemeToggle
+              theme={theme}
+              onChange={setTheme}
+            />
+          </div>
+
+          {/* Staging Area: Dual View vs Single 3D Flip */}
           {device === "dual" ? (
             /* Dual View: Both iPhone & Android side-by-side with independent expand/collapse */
             <div className="w-full flex flex-col xl:flex-row items-center justify-center gap-8 py-2 animate-in fade-in duration-300">
@@ -177,28 +196,6 @@ export function PushPreviewHub() {
               </div>
             </div>
           )}
-
-          {/* Unified Device Controls: Device Switcher + Dual View + Capsule Theme Toggle */}
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
-            <SlidingTabs<DeviceType>
-              value={device}
-              onChange={handleDeviceChange}
-              options={[
-                { value: "ios", label: "iOS" },
-                { value: "android", label: "Android" },
-                { value: "dual", label: "Dual" },
-              ]}
-              className="w-[230px] sm:w-[250px] shrink-0"
-              size="sm"
-              ariaLabel="Device selector tabs"
-            />
-
-            {/* Device Theme Toggle (Sun/Moon Capsule Switch from Core) */}
-            <DeviceThemeToggle
-              theme={theme}
-              onChange={setTheme}
-            />
-          </div>
         </div>
       </div>
 
