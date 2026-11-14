@@ -23,17 +23,32 @@ export function AndroidPreviewCard({
   const validButtons = data.buttons.filter((b) => b && b.trim().length > 0);
 
   return (
-    <div className="relative mx-auto w-full max-w-[340px] h-[650px] rounded-[48px] border-[7px] border-[#252625] bg-[#121316] shadow-[0_25px_70px_rgba(0,0,0,0.7)] select-none transition-colors duration-300">
+    <div
+      className={`relative mx-auto w-full max-w-[340px] h-[650px] rounded-[48px] p-[2.5px] select-none transition-all duration-300 ${
+        isLight
+          ? "border-[3.5px] border-[#cbd5e1] bg-[#e2e8f0] shadow-[0_25px_70px_rgba(0,0,0,0.65),0_0_0_1px_rgba(255,255,255,0.4)] ring-1 ring-black/10"
+          : "border-[3.5px] border-[#3a3c44] bg-[#1c1d22] shadow-[0_25px_70px_rgba(0,0,0,0.85)] ring-1 ring-white/10"
+      }`}
+    >
       {/* Outer Physical Hardware Buttons for Android */}
       {/* Right Edge: Power Button */}
-      <div className="absolute -right-[10.5px] top-[150px] w-[3.5px] h-[36px] rounded-r-sm bg-[#3a3c42] shadow-sm pointer-events-none" />
+      <div
+        className={`absolute -right-[9.5px] top-[150px] w-[3.5px] h-[36px] rounded-r-sm shadow-sm pointer-events-none transition-colors duration-300 ${
+          isLight ? "bg-[#94a3b8]" : "bg-[#3a3c42]"
+        }`}
+      />
       {/* Right Edge: Volume Rocker Button */}
-      <div className="absolute -right-[10.5px] top-[204px] w-[3.5px] h-[68px] rounded-r-sm bg-[#3a3c42] shadow-sm pointer-events-none" />
+      <div
+        className={`absolute -right-[9.5px] top-[204px] w-[3.5px] h-[68px] rounded-r-sm shadow-sm pointer-events-none transition-colors duration-300 ${
+          isLight ? "bg-[#94a3b8]" : "bg-[#3a3c42]"
+        }`}
+      />
 
-      {/* Screen Inner Container (Cleanly Clipped) */}
-      <div className="relative w-full h-full rounded-[41px] overflow-hidden flex flex-col">
-        {/* Front Camera Hole-punch */}
-        <div className="absolute top-3 left-1/2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-black z-30 border border-[#1a1a1a]" />
+      {/* Screen Inner Container (Cleanly Clipped Display with Authentic Black Bezel) */}
+      <div className="relative w-full h-full rounded-[41px] p-[3.5px] bg-[#000000] flex flex-col overflow-hidden">
+        <div className="relative w-full h-full rounded-[37px] overflow-hidden flex flex-col">
+          {/* Front Camera Hole-punch */}
+          <div className="absolute top-3 left-1/2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-black z-30 border border-[#1a1a1a]" />
 
         {/* Screen Background (Google Pixel Material You Dark vs Light Wallpaper) */}
         <div
@@ -312,6 +327,7 @@ export function AndroidPreviewCard({
               isLight ? "bg-[#747775]/40" : "bg-[#8e918f]/50"
             }`}
           />
+        </div>
         </div>
       </div>
     </div>

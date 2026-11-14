@@ -23,24 +23,47 @@ export function IosPreviewCard({
   const validButtons = data.buttons.filter((b) => b && b.trim().length > 0);
 
   return (
-    <div className="relative mx-auto w-full max-w-[340px] h-[650px] rounded-[48px] border-[7px] border-[#252625] bg-[#000000] shadow-[0_25px_70px_rgba(0,0,0,0.7)] select-none transition-colors duration-300">
+    <div
+      className={`relative mx-auto w-full max-w-[340px] h-[650px] rounded-[48px] p-[2.5px] select-none transition-all duration-300 ${
+        isLight
+          ? "border-[3.5px] border-[#cbd5e1] bg-[#e2e8f0] shadow-[0_25px_70px_rgba(0,0,0,0.65),0_0_0_1px_rgba(255,255,255,0.4)] ring-1 ring-black/10"
+          : "border-[3.5px] border-[#3a3c44] bg-[#1c1d22] shadow-[0_25px_70px_rgba(0,0,0,0.85)] ring-1 ring-white/10"
+      }`}
+    >
       {/* Outer Physical Hardware Buttons for iPhone */}
       {/* Left Edge: Action Button / Mute Switch */}
-      <div className="absolute -left-[10.5px] top-[110px] w-[3.5px] h-[28px] rounded-l-sm bg-[#3a3c42] shadow-sm pointer-events-none" />
+      <div
+        className={`absolute -left-[9.5px] top-[110px] w-[3.5px] h-[28px] rounded-l-sm shadow-sm pointer-events-none transition-colors duration-300 ${
+          isLight ? "bg-[#94a3b8]" : "bg-[#3a3c42]"
+        }`}
+      />
       {/* Left Edge: Volume Up Button */}
-      <div className="absolute -left-[10.5px] top-[154px] w-[3.5px] h-[52px] rounded-l-sm bg-[#3a3c42] shadow-sm pointer-events-none" />
+      <div
+        className={`absolute -left-[9.5px] top-[154px] w-[3.5px] h-[52px] rounded-l-sm shadow-sm pointer-events-none transition-colors duration-300 ${
+          isLight ? "bg-[#94a3b8]" : "bg-[#3a3c42]"
+        }`}
+      />
       {/* Left Edge: Volume Down Button */}
-      <div className="absolute -left-[10.5px] top-[220px] w-[3.5px] h-[52px] rounded-l-sm bg-[#3a3c42] shadow-sm pointer-events-none" />
+      <div
+        className={`absolute -left-[9.5px] top-[220px] w-[3.5px] h-[52px] rounded-l-sm shadow-sm pointer-events-none transition-colors duration-300 ${
+          isLight ? "bg-[#94a3b8]" : "bg-[#3a3c42]"
+        }`}
+      />
       {/* Right Edge: Side / Power Button */}
-      <div className="absolute -right-[10.5px] top-[170px] w-[3.5px] h-[78px] rounded-r-sm bg-[#3a3c42] shadow-sm pointer-events-none" />
+      <div
+        className={`absolute -right-[9.5px] top-[170px] w-[3.5px] h-[78px] rounded-r-sm shadow-sm pointer-events-none transition-colors duration-300 ${
+          isLight ? "bg-[#94a3b8]" : "bg-[#3a3c42]"
+        }`}
+      />
 
-      {/* Screen Inner Container (Cleanly Clipped) */}
-      <div className="relative w-full h-full rounded-[41px] overflow-hidden flex flex-col">
-        {/* Dynamic Island Silhouette */}
-        <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-26 h-6 bg-black rounded-full z-30 flex items-center justify-between px-3 border border-white/5">
-          <div className="w-2.5 h-2.5 rounded-full bg-[#111]" />
-          <div className="w-2 h-2 rounded-full bg-[#0d1624]" />
-        </div>
+      {/* Screen Inner Container (Cleanly Clipped Display with Authentic Black Bezel) */}
+      <div className="relative w-full h-full rounded-[41px] p-[3.5px] bg-[#000000] flex flex-col overflow-hidden">
+        <div className="relative w-full h-full rounded-[37px] overflow-hidden flex flex-col">
+          {/* Dynamic Island Silhouette */}
+          <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-26 h-6 bg-black rounded-full z-30 flex items-center justify-between px-3 border border-white/5">
+            <div className="w-2.5 h-2.5 rounded-full bg-[#111]" />
+            <div className="w-2 h-2 rounded-full bg-[#0d1624]" />
+          </div>
 
         {/* Apple Wallpaper (Dark vs Light Gradient) */}
         <div
@@ -327,6 +350,7 @@ export function IosPreviewCard({
               isLight ? "bg-black/35" : "bg-white/50"
             }`}
           />
+        </div>
         </div>
       </div>
     </div>
