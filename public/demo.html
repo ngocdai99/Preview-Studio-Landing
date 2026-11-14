@@ -1527,9 +1527,9 @@ y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     </button>
     <input type="file" id="msIconModalInput" accept="image/*" hidden>
   </div>
-  <div class="icon-modal-disclaimer" id="iconModalDisclaimer" role="button" tabindex="0" aria-label="Store Review Disclaimer">
+  <div class="icon-modal-disclaimer" id="iconModalDisclaimer" aria-label="Store Review Disclaimer">
     <span class="info-tip-btn" data-tip-title="Store Review Disclaimer" data-tip-desc="Validation checks help catch mechanical formatting mistakes (such as incorrect dimensions, transparent alpha channels on iOS, or file size limits).&#10;&#10;However, passing these checks does not guarantee store approval — final acceptance is decided solely by Apple and Google review teams based on your complete submission and store guidelines." tabindex="0" role="button" aria-label="Store Review Disclaimer">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="10"></circle>
         <line x1="12" y1="16" x2="12" y2="12"></line>
         <line x1="12" y1="8" x2="12.01" y2="8"></line>
@@ -1792,7 +1792,8 @@ const secTitle = $('appIconResizeSectionTitle') || (typeof document !== 'undefin
 const fitBox = $('appIconFitContainer') || (typeof document !== 'undefined' && typeof document.querySelector === 'function' ? document.querySelector('.icon-resizer-fit-container') : null);
 if (liveCv) liveCv.style.display = isIconType ? '' : 'none';
 if (secTitle) {
-secTitle.style.display = isIconType ? '' : 'none';
+const isDemo = typeof isDemoMode === 'function' && isDemoMode();
+secTitle.style.display = (isIconType && isDemo) ? 'block' : 'none';
 if (isIconType) secTitle.textContent = 'Your App Icon';
 }
 if (fitBox) fitBox.style.display = isIconType ? 'flex' : 'none';
