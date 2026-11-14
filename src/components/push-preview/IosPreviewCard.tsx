@@ -18,6 +18,7 @@ export function IosPreviewCard({
   onToggleExpand,
 }: IosPreviewCardProps) {
   const isLight = theme === "light";
+  const validButtons = data.buttons.filter((b) => b && b.trim().length > 0);
 
   return (
     <div className="relative mx-auto w-full max-w-[340px] h-[650px] rounded-[48px] border-[7px] border-[#252625] bg-[#000000] shadow-[0_25px_70px_rgba(0,0,0,0.7)] overflow-hidden flex flex-col select-none transition-colors duration-300">
@@ -75,7 +76,7 @@ export function IosPreviewCard({
       <div className="relative z-10 flex-1 px-3.5 pt-2 overflow-y-auto">
         <div
           onClick={onToggleExpand}
-          className={`group cursor-pointer w-full rounded-[24px] p-3.5 transition-all duration-300 ${
+          className={`group cursor-pointer w-full rounded-[24px] p-3.5 transition-all duration-350 ease-[cubic-bezier(0.25,1,0.5,1)] ${
             isLight
               ? "bg-white/80 backdrop-blur-3xl border border-black/10 shadow-[0_12px_40px_rgba(0,0,0,0.12)] hover:bg-white/90"
               : "bg-white/[0.13] backdrop-blur-3xl border border-white/[0.2] shadow-[0_12px_40px_rgba(0,0,0,0.45)] hover:bg-white/[0.18]"
@@ -146,7 +147,7 @@ export function IosPreviewCard({
               )}
 
               <p
-                className={`text-[12px] leading-relaxed mt-0.5 ${
+                className={`text-[12px] leading-relaxed mt-0.5 transition-all duration-300 ${
                   isLight ? "text-[#48484a]" : "text-white/75"
                 } ${expanded ? "" : "line-clamp-2"}`}
               >
@@ -154,10 +155,14 @@ export function IosPreviewCard({
               </p>
             </div>
 
-            {/* Small thumbnail in collapsed view if image exists */}
-            {!expanded && data.attachedImageUrl && (
+            {/* Small thumbnail in collapsed view with smooth AnimatedSize fade */}
+            {data.attachedImageUrl && (
               <div
-                className={`w-11 h-11 rounded-xl overflow-hidden shrink-0 shadow-sm border ${
+                className={`transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] ${
+                  expanded
+                    ? "w-0 h-0 opacity-0 scale-75 overflow-hidden pointer-events-none"
+                    : "w-11 h-11 opacity-100 scale-100 rounded-xl overflow-hidden shrink-0 shadow-sm border"
+                } ${
                   isLight
                     ? "bg-[#e5e7eb] border-black/10"
                     : "bg-black/40 border-white/10"
@@ -166,40 +171,46 @@ export function IosPreviewCard({
                 <img
                   src={data.attachedImageUrl}
                   alt="Attachment"
-                  className="w-full h-full object-cover"
+                  className="w-11 h-11 object-cover"
                 />
               </div>
             )}
           </div>
 
-          {/* Expanded Rich Media Attachment */}
-          {expanded && data.attachedImageUrl && (
-            <div
-              className={`mt-2.5 rounded-xl overflow-hidden max-h-40 shadow-inner border ${
-                isLight
-                  ? "bg-black/10 border-black/10"
-                  : "bg-black/40 border-white/10"
-              }`}
-            >
-              <img
-                src={data.attachedImageUrl}
-                alt="Banner Attachment"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          )}
+          {/* Animated Expandable Area (AnimatedSize) */}
+          <div
+            className="grid transition-all duration-350 ease-[cubic-bezier(0.25,1,0.5,1)]"
+            style={{
+              gridTemplateRows: expanded ? "1fr" : "0fr",
+              opacity: expanded ? 1 : 0,
+            }}
+          >
+            <div className="overflow-hidden">
+              {/* Expanded Rich Media Attachment */}
+              {data.attachedImageUrl && (
+                <div
+                  className={`mt-2.5 rounded-xl overflow-hidden max-h-40 shadow-inner border ${
+                    isLight
+                      ? "bg-black/10 border-black/10"
+                      : "bg-black/40 border-white/10"
+                  }`}
+                >
+                  <img
+                    src={data.attachedImageUrl}
+                    alt="Banner Attachment"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
 
-          {/* Expanded Action Buttons (iOS Frosted Glass Pills) */}
-          {expanded &&
-            data.buttons.filter((b) => b && b.trim().length > 0).length > 0 && (
-              <div
-                className={`mt-3 grid grid-cols-2 gap-1.5 pt-2 border-t ${
-                  isLight ? "border-black/10" : "border-white/10"
-                }`}
-              >
-                {data.buttons
-                  .filter((b) => b && b.trim().length > 0)
-                  .map((btn, idx) => (
+              {/* Expanded Action Buttons (iOS Frosted Glass Pills) */}
+              {validButtons.length > 0 && (
+                <div
+                  className={`mt-3 grid grid-cols-2 gap-1.5 pt-2 border-t ${
+                    isLight ? "border-black/10" : "border-white/10"
+                  }`}
+                >
+                  {validButtons.map((btn, idx) => (
                     <button
                       key={idx}
                       type="button"
@@ -212,8 +223,10 @@ export function IosPreviewCard({
                       {btn}
                     </button>
                   ))}
-              </div>
-            )}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* State Toggle Hint */}

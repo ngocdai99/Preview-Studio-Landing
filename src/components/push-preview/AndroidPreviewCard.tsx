@@ -18,6 +18,7 @@ export function AndroidPreviewCard({
   onToggleExpand,
 }: AndroidPreviewCardProps) {
   const isLight = theme === "light";
+  const validButtons = data.buttons.filter((b) => b && b.trim().length > 0);
 
   return (
     <div className="relative mx-auto w-full max-w-[340px] h-[650px] rounded-[48px] border-[7px] border-[#252625] bg-[#121316] shadow-[0_25px_70px_rgba(0,0,0,0.7)] overflow-hidden flex flex-col select-none transition-colors duration-300">
@@ -73,7 +74,7 @@ export function AndroidPreviewCard({
       <div className="relative z-10 flex-1 px-3.5 pt-3 overflow-y-auto">
         <div
           onClick={onToggleExpand}
-          className={`group cursor-pointer w-full rounded-[22px] p-3.5 transition-all duration-300 ${
+          className={`group cursor-pointer w-full rounded-[22px] p-3.5 transition-all duration-350 ease-[cubic-bezier(0.25,1,0.5,1)] ${
             isLight
               ? "bg-[#ffffff] border border-[#e1e3e1] shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover:border-[#c4c7c5]"
               : "bg-[#1d2024] border border-[#2d3139] shadow-[0_8px_30px_rgba(0,0,0,0.35)] hover:border-[#3c4043]"
@@ -124,15 +125,11 @@ export function AndroidPreviewCard({
               </span>
             </div>
             <div
-              className={`transition-colors ${
+              className={`transition-transform duration-300 ${
                 isLight ? "text-[#747775] group-hover:text-[#1f1f1f]" : "text-[#8e918f] group-hover:text-white"
-              }`}
+              } ${expanded ? "rotate-0" : "rotate-180"}`}
             >
-              {expanded ? (
-                <ChevronUp className="w-3.5 h-3.5" />
-              ) : (
-                <ChevronDown className="w-3.5 h-3.5" />
-              )}
+              <ChevronUp className="w-3.5 h-3.5" />
             </div>
           </div>
 
@@ -147,7 +144,7 @@ export function AndroidPreviewCard({
                 {data.title || "Notification Title"}
               </h4>
               <p
-                className={`text-[12px] leading-relaxed mt-0.5 ${
+                className={`text-[12px] leading-relaxed mt-0.5 transition-all duration-300 ${
                   isLight ? "text-[#444746]" : "text-[#c4c7c5]"
                 } ${expanded ? "" : "line-clamp-2"}`}
               >
@@ -155,10 +152,14 @@ export function AndroidPreviewCard({
               </p>
             </div>
 
-            {/* Collapsed view thumbnail */}
-            {!expanded && data.attachedImageUrl && (
+            {/* Collapsed view thumbnail with smooth AnimatedSize fade */}
+            {data.attachedImageUrl && (
               <div
-                className={`w-12 h-12 rounded-xl overflow-hidden shrink-0 shadow-sm border ${
+                className={`transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] ${
+                  expanded
+                    ? "w-0 h-0 opacity-0 scale-75 overflow-hidden pointer-events-none"
+                    : "w-12 h-12 opacity-100 scale-100 rounded-xl overflow-hidden shrink-0 shadow-sm border"
+                } ${
                   isLight
                     ? "bg-[#e5e7eb] border-black/10"
                     : "bg-black/40 border-white/5"
@@ -167,40 +168,46 @@ export function AndroidPreviewCard({
                 <img
                   src={data.attachedImageUrl}
                   alt="Thumbnail"
-                  className="w-full h-full object-cover"
+                  className="w-12 h-12 object-cover"
                 />
               </div>
             )}
           </div>
 
-          {/* Expanded Big Picture */}
-          {expanded && data.attachedImageUrl && (
-            <div
-              className={`mt-2.5 rounded-xl overflow-hidden max-h-40 shadow-inner border ${
-                isLight
-                  ? "bg-black/5 border-black/10"
-                  : "bg-black/30 border-white/5"
-              }`}
-            >
-              <img
-                src={data.attachedImageUrl}
-                alt="Big Picture"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          )}
+          {/* Animated Expandable Area (AnimatedSize) */}
+          <div
+            className="grid transition-all duration-350 ease-[cubic-bezier(0.25,1,0.5,1)]"
+            style={{
+              gridTemplateRows: expanded ? "1fr" : "0fr",
+              opacity: expanded ? 1 : 0,
+            }}
+          >
+            <div className="overflow-hidden">
+              {/* Expanded Big Picture */}
+              {data.attachedImageUrl && (
+                <div
+                  className={`mt-2.5 rounded-xl overflow-hidden max-h-40 shadow-inner border ${
+                    isLight
+                      ? "bg-black/5 border-black/10"
+                      : "bg-black/30 border-white/5"
+                  }`}
+                >
+                  <img
+                    src={data.attachedImageUrl}
+                    alt="Big Picture"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
 
-          {/* Expanded Action Buttons (Material You Pills) */}
-          {expanded &&
-            data.buttons.filter((b) => b && b.trim().length > 0).length > 0 && (
-              <div
-                className={`mt-3 flex flex-wrap gap-2 pt-2 border-t ${
-                  isLight ? "border-[#e1e3e1]" : "border-[#2d3139]"
-                }`}
-              >
-                {data.buttons
-                  .filter((b) => b && b.trim().length > 0)
-                  .map((btn, idx) => (
+              {/* Expanded Action Buttons (Material You Pills) */}
+              {validButtons.length > 0 && (
+                <div
+                  className={`mt-3 flex flex-wrap gap-2 pt-2 border-t ${
+                    isLight ? "border-[#e1e3e1]" : "border-[#2d3139]"
+                  }`}
+                >
+                  {validButtons.map((btn, idx) => (
                     <button
                       key={idx}
                       type="button"
@@ -213,8 +220,10 @@ export function AndroidPreviewCard({
                       {btn}
                     </button>
                   ))}
-              </div>
-            )}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* State Toggle Hint */}
